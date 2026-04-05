@@ -1,0 +1,10 @@
+function doPost(e) {
+  var sheet = SpreadsheetApp.openById("1YSQGhZov0-efXPDdfAsqOTa73MWlc1cIINq7Xd47OsY").getSheetByName("フォームの回答 1");
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([new Date(), data.instructor, data.plannerCount, data.plannerCost, data.groupCount, data.participantCount, data.achievement, data.issues, "", "", data.eventDate, data.eventVenue, data.eventTitle, data.eventCircle]);
+  return ContentService.createTextOutput("ok");
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput("ok");
+}
