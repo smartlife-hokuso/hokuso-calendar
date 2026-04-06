@@ -404,6 +404,8 @@ body {
 </div>
 
 <script>
+var GAS_URL = "https://script.google.com/macros/s/AKfycbyKE0jn6RNzzHcg7rYCt90Wb5hqMBk1tmoQJAwN-p7wI0M4xJObxMObFzPmkjALdnzLdQ/exec";
+
 function filter() {
     const q = document.getElementById('q').value.toLowerCase();
     let shown = 0;
@@ -419,6 +421,49 @@ function filter() {
     });
     document.getElementById('sPeople').textContent = shown;
 }
+
+// スプレッドシートから集計値を取得してトップページに表示
+function loadTotals() {
+    fetch(GAS_URL + "?action=totals")
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+          var planners = data.planners || data;
+          var totalCust = 0, totalVC = 0;
+          var matched = 0;
+
+          document.querySelectorAll('.p-icon').forEach(function(el) {
+              var name = el.dataset.n;
+              var d = planners[name] || planners[name.replace(/\s/g, "")];
+              if (!d) return;
+              matched++;
+
+              var cust = Number(d.cust || d["担当軒数"]) || 0;
+              var people = Number(d.people || d["担当人数"]) || 0;
+              var ao = Number(d.ao || d["内AO生"]) || 0;
+              var dx = Number(d.dx || d["VC"]) || 0;
+
+              totalCust += cust;
+              totalVC += dx;
+
+              var nums = el.querySelector('.nums');
+              if (nums) {
+                  nums.innerHTML = '<span class="n-k">軒' + cust + '</span>'
+                      + '<span class="n-p">人' + people + '</span>'
+                      + '<span class="n-a">AO' + ao + '</span>'
+                      + '<span class="n-d">DX' + dx + '</span>';
+              }
+          });
+
+          document.getElementById('sCust').textContent = data.totalCust || totalCust;
+          document.getElementById('sVC').textContent = data.totalVC || totalVC;
+      })
+      .catch(function(err) {
+          console.error("集計取得エラー:", err);
+      });
+}
+
+// ページ読み込み時に集計を取得
+loadTotals();
 </script>
 </body>
 </html>

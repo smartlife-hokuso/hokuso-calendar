@@ -7,12 +7,14 @@ function doPost(e) {
 
 function doGet(e) {
   var sheet = SpreadsheetApp.openById("1C7eexH2OyzK0THgiphzZJpiFD34jFDkaiXGN8itOhhA").getSheetByName("フォームの回答 1");
-  var eventName = e.parameter.event || "";
+  var eventName = (e.parameter.event || "").toString().trim();
   var data = sheet.getDataRange().getValues();
   var totalGroups = 0;
   var totalPeople = 0;
   for (var i = 1; i < data.length; i++) {
-    if (data[i][4] == eventName) {
+    var cellValue = (data[i][4] || "").toString().trim();
+    // 完全一致 or 部分一致（GoogleフォームとWebカレンダーの形式差を吸収）
+    if (cellValue === eventName || cellValue.indexOf(eventName) >= 0 || eventName.indexOf(cellValue) >= 0) {
       totalGroups = totalGroups + Number(data[i][1] || 0);
       totalPeople = totalPeople + Number(data[i][2] || 0);
     }

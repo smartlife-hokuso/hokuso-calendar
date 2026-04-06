@@ -8,6 +8,8 @@ function doGet(e) {
 
   if (action === "save") {
     json = JSON.stringify(saveData(e));
+  } else if (action === "totals") {
+    json = JSON.stringify(readTotals());
   } else {
     json = JSON.stringify(readData(e));
   }
@@ -46,6 +48,40 @@ function readData(e) {
     result[name] = person;
   }
   return result;
+}
+
+function readTotals() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var ws = ss.getSheetByName(SHEET_NAME);
+  var allData = ws.getDataRange().getValues();
+  var nameRow = allData[2]; // 3行目 = 名前行
+  var itemCol = 2;          // C列 = 項目名
+
+  // 項目名→行番号のマッピング
+  var itemRows = {};
+  for (var r = 3; r < allData.length; r++) {
+    var item = allData[r][itemCol] ? allData[r][itemCol].toString().trim() : "";
+    if (item) itemRows[item] = r;
+  }
+
+  var totalCust = 0, totalVC = 0;
+  var planners = {};
+
+  for (var c = 3; c < nameRow.length; c++) {
+    var name = nameRow[c] ? nameRow[c].toString().trim() : "";
+    if (!name) continue;
+    var nameKey = name.replace(/\s/g, "");
+    var cust = Number(allData[itemRows["担当軒数"]] ? allData[itemRows["担当軒数"]][c] : 0) || 0;
+    var people = Number(allData[itemRows["担当人数"]] ? allData[itemRows["担当人数"]][c] : 0) || 0;
+    var ao = Number(allData[itemRows["内AO生"]] ? allData[itemRows["内AO生"]][c] : 0) || 0;
+    var vc = Number(allData[itemRows["VC"]] ? allData[itemRows["VC"]][c] : 0) || 0;
+
+    totalCust += cust;
+    totalVC += vc;
+    planners[nameKey] = { cust: cust, people: people, ao: ao, dx: vc };
+  }
+
+  return { totalCust: totalCust, totalVC: totalVC, planners: planners };
 }
 
 function saveData(e) {
