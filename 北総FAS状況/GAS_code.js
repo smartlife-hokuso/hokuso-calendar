@@ -127,6 +127,59 @@ function saveDataDirect(name, values) {
   return {status: "ok", updated: updates, name: name};
 }
 
+// 全拠点のプランナーをスプレッドシートに追加（GASエディタで1回だけ実行）
+function addAllPlanners() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var ws = ss.getSheetByName(SHEET_NAME);
+  var nameRow = ws.getRange(3, 1, 1, ws.getLastColumn()).getValues()[0];
+
+  // 既存の名前を取得（スペース除去で比較用）
+  var existing = {};
+  for (var i = 0; i < nameRow.length; i++) {
+    if (nameRow[i]) existing[nameRow[i].toString().replace(/\s/g, "")] = true;
+  }
+
+  // 拠点ごとのプランナー一覧
+  var regions = [
+    { name: "SL鎌ケ谷", members: ["片桐 啓介","入江 渓太","新田 祐二","柴 由香里","玉井 なおこ","関根 瞳","井戸 昭人","金 鍾進","濱田 耕一","工藤 李紀"] },
+    { name: "成田デジタル館", members: ["武田 翔人"] },
+    { name: "DCL千葉NT", members: ["齋藤 えま","森川 直人","小野寺 真唯","秋山 徹平","佐藤 諒","原重 彩花","烏蘭 其其格","髙梨 聖真"] },
+    { name: "DCL旭", members: ["平山 敬人","早川 浩史","小林 敬史","遠藤 晴香","柴 茂雄"] },
+    { name: "DCL四街道", members: ["富井 優太","藤本 圭","星野 凌我","橘木 悠人"] },
+    { name: "DCL白井駅前", members: ["二村 和徳","渡辺 久斗","椎名 淳之"] },
+    { name: "SL成田", members: ["諏訪 開飛","小林 篤司","山野井 尋紀","保屋松 綾太"] }
+  ];
+
+  var nextCol = ws.getLastColumn() + 1;
+  var added = [];
+
+  for (var r = 0; r < regions.length; r++) {
+    var region = regions[r];
+    for (var m = 0; m < region.members.length; m++) {
+      var member = region.members[m];
+      var key = member.replace(/\s/g, "");
+      if (existing[key]) continue; // 既存ならスキップ
+
+      // 2行目に拠点名、3行目に名前を書き込む
+      ws.getRange(2, nextCol).setValue(region.name);
+      ws.getRange(3, nextCol).setValue(member);
+      added.push(region.name + ": " + member);
+      nextCol++;
+    }
+  }
+
+  // SL富里の既存メンバーにも拠点名を追加（2行目が空なら）
+  for (var c = 4; c <= ws.getLastColumn(); c++) {
+    var row2 = ws.getRange(2, c).getValue();
+    var row3 = ws.getRange(3, c).getValue();
+    if (row3 && !row2) {
+      ws.getRange(2, c).setValue("SL富里インター");
+    }
+  }
+
+  return "追加完了: " + added.length + "名\n" + added.join("\n");
+}
+
 function writeLog(ss, name, values, updatedKeys) {
   var logSheet = ss.getSheetByName("変更ログ");
   if (!logSheet) {
