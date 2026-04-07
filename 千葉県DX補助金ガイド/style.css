@@ -1,0 +1,335 @@
+/* 千葉県DX補助金ガイド 共通CSS */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --primary: #1a5276;
+  --primary-light: #2980b9;
+  --accent: #e74c3c;
+  --accent-orange: #e67e22;
+  --bg-light: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-dark: #2c3e50;
+  --text-gray: #6c757d;
+  --border: #dee2e6;
+  --success: #27ae60;
+  --info: #3498db;
+  --gradient-blue: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+  --gradient-green: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  --gradient-orange: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+  --shadow: 0 4px 15px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+/* ===== INDEX PAGE ===== */
+.hero {
+  background: var(--gradient-blue);
+  color: white;
+  padding: 60px 20px 50px;
+  text-align: center;
+}
+.hero h1 { font-size: 2.2em; font-weight: 900; margin-bottom: 10px; }
+.hero .subtitle { font-size: 1.1em; opacity: 0.9; font-weight: 300; }
+.hero .date { margin-top: 12px; font-size: 0.9em; opacity: 0.7; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+.section-title {
+  font-size: 1.4em;
+  font-weight: 700;
+  color: var(--primary);
+  border-left: 5px solid var(--primary-light);
+  padding-left: 15px;
+  margin: 40px 0 20px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+.card-header {
+  padding: 18px 20px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.card-header.blue { background: var(--gradient-blue); }
+.card-header.green { background: var(--gradient-green); }
+.card-header.orange { background: var(--gradient-orange); }
+
+.card-body { padding: 18px 20px; }
+.card-body p { color: var(--text-gray); font-size: 0.92em; margin-bottom: 8px; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.78em;
+  font-weight: 500;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+.badge-report { background: #eaf2f8; color: var(--primary-light); }
+.badge-pres { background: #fdebd0; color: var(--accent-orange); }
+.badge-common { background: #d5f5e3; color: var(--success); }
+.badge-local { background: #fadbd8; color: var(--accent); }
+
+.links { display: flex; gap: 10px; margin-top: 12px; }
+.links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.links a:hover { opacity: 0.85; }
+.btn-report { background: var(--primary-light); color: white; }
+.btn-pres { background: var(--accent-orange); color: white; }
+
+/* ===== REPORT PAGE ===== */
+.report {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100vh;
+}
+
+.report-header {
+  background: var(--gradient-blue);
+  color: white;
+  padding: 40px 40px 30px;
+}
+.report-header h1 { font-size: 1.8em; font-weight: 900; margin-bottom: 8px; }
+.report-header .tagline { font-size: 1em; opacity: 0.85; }
+
+.report-body { padding: 30px 40px; }
+
+.report h2 {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary-light);
+  padding-bottom: 6px;
+  margin: 28px 0 14px;
+}
+.report h3 {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 18px 0 8px;
+}
+
+.subsidy-card {
+  background: var(--bg-light);
+  border-left: 4px solid var(--primary-light);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 12px 0;
+}
+.subsidy-card.highlight {
+  border-left-color: var(--accent);
+  background: #fef5f3;
+}
+.subsidy-card .name { font-weight: 700; font-size: 1em; color: var(--primary); }
+.subsidy-card .amount { color: var(--accent); font-weight: 700; font-size: 1.1em; margin: 4px 0; }
+.subsidy-card .detail { font-size: 0.9em; color: var(--text-gray); }
+
+table.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.9em;
+}
+table.info-table th {
+  background: var(--primary);
+  color: white;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 500;
+}
+table.info-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+table.info-table tr:nth-child(even) td { background: #f8f9fa; }
+
+.callout {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 0.92em;
+}
+.callout strong { color: #856404; }
+
+.contact-box {
+  background: var(--bg-light);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-top: 20px;
+}
+.contact-box h3 { color: var(--primary); margin-bottom: 8px; }
+
+.back-link {
+  display: inline-block;
+  margin: 20px 0;
+  padding: 8px 20px;
+  background: var(--primary-light);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.9em;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-gray);
+  font-size: 0.82em;
+  border-top: 1px solid var(--border);
+  margin-top: 30px;
+}
+
+/* ===== PRESENTATION ===== */
+.pres-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.slide {
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.slide-header {
+  background: var(--gradient-blue);
+  color: white;
+  padding: 30px 40px 20px;
+  flex-shrink: 0;
+}
+.slide-header.green { background: var(--gradient-green); }
+.slide-header.orange { background: var(--gradient-orange); }
+.slide-header.accent { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+
+.slide-header h2 { font-size: 1.6em; font-weight: 900; }
+.slide-header .slide-sub { font-size: 0.95em; opacity: 0.85; margin-top: 4px; }
+
+.slide-body {
+  padding: 25px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 0.95em;
+}
+
+.slide-body .big-number {
+  font-size: 2.8em;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+}
+.slide-body .big-label {
+  font-size: 1em;
+  color: var(--text-gray);
+  margin-top: 4px;
+}
+
+.slide-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.slide-item {
+  background: var(--bg-light);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.slide-item .item-title { font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.slide-item .item-amount { color: var(--accent); font-weight: 700; font-size: 1.2em; }
+
+.slide-number {
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  font-size: 0.8em;
+  color: var(--text-gray);
+}
+
+.step-list { list-style: none; counter-reset: step; }
+.step-list li {
+  counter-increment: step;
+  padding: 10px 0 10px 50px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 34px;
+  height: 34px;
+  background: var(--primary-light);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9em;
+}
+
+@media print {
+  .slide { page-break-after: always; box-shadow: none; border: 1px solid #ddd; }
+  .back-link, .pres-nav { display: none; }
+  .report { box-shadow: none; }
+}
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 1.5em; }
+  .card-grid { grid-template-columns: 1fr; }
+  .report-body { padding: 20px; }
+  .report-header { padding: 25px 20px; }
+  .slide-body { padding: 15px 20px; }
+  .slide-header { padding: 20px; }
+  .slide-cols { grid-template-columns: 1fr; }
+}
