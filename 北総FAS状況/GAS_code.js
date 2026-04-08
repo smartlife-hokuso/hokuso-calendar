@@ -111,12 +111,15 @@ function saveDataDirect(name, values) {
   }
   var items = ws.getRange(1, 3, ws.getLastRow(), 1).getValues();
   var updates = [];
+  var oldValues = {};
   var keys = Object.keys(values);
   for (var k = 0; k < keys.length; k++) {
     var key = keys[k];
     var value = values[key];
     for (var r = 0; r < items.length; r++) {
       if (items[r][0] && items[r][0].toString().trim() === key.trim()) {
+        var oldVal = ws.getRange(r + 1, col).getValue();
+        oldValues[key] = oldVal !== null && oldVal !== "" ? oldVal : 0;
         ws.getRange(r + 1, col).setValue(Number(value) || 0);
         updates.push(key);
         break;
@@ -126,7 +129,7 @@ function saveDataDirect(name, values) {
   ws.getRange(2, 2).setValue("更新日:" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日"));
 
   // 変更ログを記録
-  writeLog(ss, name, values, updates);
+  writeLog(ss, name, values, updates, oldValues);
 
   return {status: "ok", updated: updates, name: name};
 }
@@ -201,22 +204,31 @@ function readLog(e) {
       date: data[r][0] ? data[r][0].toString() : "",
       name: data[r][1] ? data[r][1].toString() : "",
       item: data[r][2] ? data[r][2].toString() : "",
-      value: data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0
+      oldVal: data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0,
+      newVal: data[r][4] !== null && data[r][4] !== undefined && data[r][4] !== "" ? data[r][4] : (data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0)
     });
   }
   return { status: "ok", logs: logs };
 }
 
-function writeLog(ss, name, values, updatedKeys) {
+function writeLog(ss, name, values, updatedKeys, oldValues) {
   var logSheet = ss.getSheetByName("変更ログ");
   if (!logSheet) {
     logSheet = ss.insertSheet("変更ログ");
-    logSheet.appendRow(["日時", "名前", "変更項目", "変更後の値"]);
-    logSheet.getRange(1, 1, 1, 4).setFontWeight("bold");
+    logSheet.appendRow(["日時", "名前", "変更項目", "変更前", "変更後"]);
+    logSheet.getRange(1, 1, 1, 5).setFontWeight("bold");
+  }
+  // ヘッダーが4列の場合は5列に更新
+  var header = logSheet.getRange(1, 1, 1, 5).getValues()[0];
+  if (!header[3] || header[3] === "変更後の値") {
+    logSheet.getRange(1, 4).setValue("変更前");
+    logSheet.getRange(1, 5).setValue("変更後");
+    logSheet.getRange(1, 1, 1, 5).setFontWeight("bold");
   }
   var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
   for (var i = 0; i < updatedKeys.length; i++) {
     var key = updatedKeys[i];
-    logSheet.appendRow([now, name, key, values[key]]);
+    var oldVal = oldValues && oldValues[key] !== undefined ? oldValues[key] : "";
+    logSheet.appendRow([now, name, key, oldVal, values[key]]);
   }
 }

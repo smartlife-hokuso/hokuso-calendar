@@ -136,7 +136,7 @@ tr:hover td { background: #f8f6ff; }
 </div>
 
 <script>
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwbnOHkm6f4FqAOgHh9vyJIKIvm6FWeoqbIbo-bs0O5AEEUHseHK9dI3Vaeb8spc8xllQ/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwhm_53kDx6M99Y6piT9f7IHzKrNdAtsZ84J5ij0m3dLxflZGNNp7MZZpA4KTiNjxB3vg/exec";
 var allLogs = [];
 
 function checkPw() {
@@ -196,10 +196,10 @@ function filterLogs() {
     return;
   }
 
-  var html = '<table><tr><th>日時</th><th>名前</th><th>変更項目</th><th>値</th></tr>';
+  var html = '<table><tr><th>日時</th><th>名前</th><th>変更項目</th><th>変更前</th><th></th><th>変更後</th></tr>';
   for (var i = 0; i < filtered.length; i++) {
     var log = filtered[i];
-    html += '<tr><td>' + esc(log.date) + '</td><td>' + esc(log.name) + '</td><td>' + esc(log.item) + '</td><td>' + esc(String(log.value)) + '</td></tr>';
+    html += '<tr><td>' + esc(log.date) + '</td><td>' + esc(log.name) + '</td><td>' + esc(log.item) + '</td><td style="text-align:right">' + esc(String(log.oldVal)) + '</td><td style="color:#6b5ea6;font-weight:bold">→</td><td style="text-align:right;color:#4a7cc9;font-weight:600">' + esc(String(log.newVal)) + '</td></tr>';
   }
   html += '</table>';
   document.getElementById("logTable").innerHTML = html;
