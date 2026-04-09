@@ -439,9 +439,18 @@ function loadHistory() {
 
 function formatDateLabel(dateStr) {
     var youbi = ["日","月","火","水","木","金","土"];
-    var parts = dateStr.split("/");
-    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    return Number(parts[1]) + "/" + Number(parts[2]) + "（" + youbi[d.getDay()] + "）";
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) {
+        var parts = dateStr.split("/");
+        d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    }
+    return (d.getMonth() + 1) + "/" + d.getDate() + "（" + youbi[d.getDay()] + "）";
+}
+
+function getDateKey(dateStr) {
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr.split(" ")[0];
+    return d.getFullYear() + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + ("0"+d.getDate()).slice(-2);
 }
 
 function onMyLogLoaded(data) {
@@ -464,7 +473,7 @@ function onMyLogLoaded(data) {
     var groups = {};
     for (var i = 0; i < changed.length; i++) {
         var log = changed[i];
-        var dateKey = log.date.split(" ")[0];
+        var dateKey = getDateKey(log.date);
         if (!groups[dateKey]) groups[dateKey] = [];
         groups[dateKey].push(log);
     }
