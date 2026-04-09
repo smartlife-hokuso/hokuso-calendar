@@ -147,6 +147,31 @@ body {
 
 .empty-msg { text-align: center; padding: 40px; color: #a0a8c0; font-size: 14px; }
 
+/* 履歴 */
+.history-group { margin-bottom: 16px; }
+.history-date {
+    padding: 10px 16px; cursor: pointer;
+    background: linear-gradient(135deg, #4a7cc9, #6b5ea6);
+    color: white; border-radius: 12px; font-weight: 600; font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.history-date:hover { opacity: 0.9; }
+.history-date .arrow { transition: transform 0.2s; }
+.history-date.open .arrow { transform: rotate(90deg); }
+.history-items { display: none; padding: 8px 0 0; }
+.history-items.open { display: block; }
+.history-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; font-size: 13px;
+    background: rgba(255,255,255,0.9); border-radius: 10px;
+    margin-bottom: 4px; border: 1px solid rgba(180,190,220,0.2);
+}
+.history-row .h-item { flex: 1; color: #4a6090; font-weight: 500; }
+.history-row .h-old { color: #999; min-width: 50px; text-align: right; }
+.history-row .h-arrow { color: #6b5ea6; font-weight: bold; }
+.history-row .h-new { color: #4a7cc9; font-weight: 700; min-width: 50px; text-align: right; }
+.history-empty { text-align: center; padding: 30px; color: #a0a8c0; font-size: 14px; }
+
 @media (max-width: 768px) {
     .profile-header { flex-direction: column; text-align: center; padding: 24px 20px; }
     .profile-info h1 { font-size: 22px; }
@@ -187,6 +212,7 @@ body {
             <button class="tab-btn" data-tab="event">イベント</button>
             <button class="tab-btn" data-tab="appoint">アポイント</button>
             <button class="tab-btn" data-tab="recruit">人材獲得</button>
+            <button class="tab-btn" data-tab="history">履歴</button>
         </div>
 
         <div class="section active" id="sec-fas">
@@ -207,11 +233,14 @@ body {
         <div class="section" id="sec-recruit">
             <div class="data-card"><h3>人材獲得</h3><div class="data-grid" id="grid-recruit"></div></div>
         </div>
+        <div class="section" id="sec-history">
+            <div class="data-card"><h3>変更履歴</h3><div id="historyArea"><div class="history-empty">読み込み中...</div></div></div>
+        </div>
     </div>
 </div>
 
 <script>
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwr5D_jl9Z-3IukNfZbEc15Ljj7aNo9CzdRD-9b8EOTDKw5yTEvb904n1AXH2B1BupoEA/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbzEkaS5EhhKGmKiNFMfYt9P7ucEI7khDc7bcTokkxFThzn0SQW6zeIpHrSgdbeTU3Hq4w/exec";
 
 // GASからデータ読み込み（リダイレクト対応）
 function loadGAS(url) {
@@ -296,6 +325,7 @@ async function init() {
             document.querySelectorAll(".section").forEach(function(s) { s.classList.remove("active"); });
             btn.classList.add("active");
             document.getElementById("sec-" + btn.dataset.tab).classList.add("active");
+            if (btn.dataset.tab === "history") loadHistory();
         });
     });
 }
@@ -398,6 +428,68 @@ async function saveData() {
         saveBtn.disabled = false;
         saveBtn.textContent = "保存する";
     }
+}
+
+// 履歴タブクリック時にログ読み込み
+var historyLoaded = false;
+function loadHistory() {
+    if (historyLoaded || !profile) return;
+    historyLoaded = true;
+    var script = document.createElement("script");
+    script.src = GAS_URL + "?action=mylog&name=" + encodeURIComponent(profile.name) + "&callback=onMyLogLoaded&_=" + Date.now();
+    document.body.appendChild(script);
+}
+
+function onMyLogLoaded(data) {
+    var area = document.getElementById("historyArea");
+    if (!data || data.status === "error" || !data.logs || data.logs.length === 0) {
+        area.innerHTML = '<div class="history-empty">まだ変更履歴がありません</div>';
+        return;
+    }
+    // 日付ごとにグループ化
+    var groups = {};
+    for (var i = 0; i < data.logs.length; i++) {
+        var log = data.logs[i];
+        var dateKey = log.date.split(" ")[0]; // "2026/04/09 12:00:00" → "2026/04/09"
+        if (!groups[dateKey]) groups[dateKey] = [];
+        groups[dateKey].push(log);
+    }
+    // 日付を新しい順にソート
+    var dates = Object.keys(groups).sort().reverse();
+    var html = "";
+    for (var d = 0; d < dates.length; d++) {
+        var date = dates[d];
+        var items = groups[date];
+        html += '<div class="history-group">';
+        html += '<div class="history-date" onclick="toggleHistory(this)"><span>' + date + '（' + items.length + '件）</span><span class="arrow">▶</span></div>';
+        html += '<div class="history-items">';
+        for (var j = 0; j < items.length; j++) {
+            var it = items[j];
+            html += '<div class="history-row">'
+                + '<span class="h-item">' + esc(it.item) + '</span>'
+                + '<span class="h-old">' + esc(String(it.oldVal)) + '</span>'
+                + '<span class="h-arrow">→</span>'
+                + '<span class="h-new">' + esc(String(it.newVal)) + '</span>'
+                + '</div>';
+        }
+        html += '</div></div>';
+    }
+    area.innerHTML = html;
+    // 最新の日付を自動で開く
+    var first = area.querySelector('.history-date');
+    if (first) toggleHistory(first);
+}
+
+function toggleHistory(el) {
+    el.classList.toggle("open");
+    var items = el.nextElementSibling;
+    items.classList.toggle("open");
+}
+
+function esc(s) {
+    var d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
 }
 
 init();
