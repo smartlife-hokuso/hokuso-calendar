@@ -427,7 +427,7 @@ function filter() {
 // スプレッドシートから集計値を取得してトップページに表示（JSONP方式）
 function loadTotals() {
     var script = document.createElement("script");
-    script.src = GAS_URL + "?action=totals&callback=onTotalsLoaded";
+    script.src = GAS_URL + "?action=totals&callback=onTotalsLoaded&_=" + Date.now();
     document.body.appendChild(script);
 }
 
