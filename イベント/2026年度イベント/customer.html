@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMARTLIFE AO 北総校｜2026年度 イベントカレンダー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;
+    background:#faf8f5;
+    color:#4a4a4a;
+    line-height:1.6;
+    min-height:100vh;
+}
+
+/* ========== ヘッダー ========== */
+.header{
+    background:#fff;
+    padding:20px 24px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 1px 8px rgba(0,0,0,0.04);
+}
+.header-inner{
+    max-width:1100px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    flex-wrap:wrap;
+}
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.brand-year{
+    font-family:"Quicksand",sans-serif;
+    font-size:28px;
+    font-weight:700;
+    color:#2a7b9b;
+    line-height:1;
+}
+.brand-name{
+    font-size:13px;
+    color:#5a5a5a;
+    line-height:1.3;
+}
+.brand-name strong{
+    font-size:22px;
+    color:#2a7b9b;
+    display:block;
+    letter-spacing:2px;
+}
+.brand-sub{
+    font-size:15px;
+    color:#666;
+    letter-spacing:2px;
+    font-weight:500;
+}
+
+/* ========== メインコンテナ ========== */
+.container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px 16px 40px;
+}
+
+/* ========== 月ナビ ========== */
+.month-nav{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+}
+.month-btn{
+    padding:10px 18px;
+    border:1.5px solid #d8d0c8;
+    border-radius:24px;
+    background:#fff;
+    color:#888;
+    cursor:pointer;
+    font-family:"Quicksand","Zen Maru Gothic",sans-serif;
+    font-size:14px;
+    font-weight:600;
+    transition:all 0.25s ease;
+    letter-spacing:0.5px;
+}
+.month-btn:hover{
+    background:#2a7b9b;
+    color:#fff;
+    border-color:#2a7b9b;
+    transform:translateY(-1px);
+    box-shadow:0 3px 12px rgba(42,123,155,0.25);
+}
+.month-btn.active{
+    background:#2a7b9b;
+    color:#fff;
+    border-color:#2a7b9b;
+    box-shadow:0 2px 10px rgba(42,123,155,0.2);
+}
+
+/* ========== カレンダーグリッド ========== */
+.calendar-section{display:none;}
+.calendar-section.active{display:block;animation:fadeIn 0.35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.calendar-month-header{
+    position:relative;
+    text-align:center;
+    margin-bottom:12px;
+}
+.calendar-month-title{
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    gap:12px;
+}
+.month-year{
+    font-family:"Quicksand",sans-serif;
+    font-size:36px;
+    font-weight:700;
+    color:#2a7b9b;
+    letter-spacing:2px;
+}
+.month-ja{
+    font-size:30px;
+    font-weight:700;
+    color:#2a7b9b;
+    letter-spacing:3px;
+}
+.venue-legend{
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+}
+.venue-legend-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:14px;
+    font-weight:600;
+    color:#555;
+}
+.venue-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    flex-shrink:0;
+}
+
+.calendar-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:1px;
+    background:#e8e4e0;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 2px 16px rgba(0,0,0,0.06);
+}
+.day-header{
+    background:#f5f2ef;
+    text-align:center;
+    padding:10px 4px;
+    font-size:12px;
+    font-weight:700;
+    color:#999;
+    letter-spacing:2px;
+}
+.day-header.mon{color:#999;}
+.day-header.sat{color:#5a8fb8;background:#f0f5fa;}
+.day-header.sun{color:#c87070;background:#faf0f0;}
+
+.day-cell{
+    background:#fff;
+    min-height:140px;
+    padding:6px;
+    cursor:default;
+    transition:background 0.15s;
+    position:relative;
+}
+.day-cell:hover{background:#fdfcfb;}
+.day-cell.empty{background:#faf9f7;min-height:40px;}
+.day-cell.today{background:#fffde8;}
+.day-cell.sat-bg{background:#f8fbff;}
+.day-cell.sun-bg{background:#fff8f8;}
+
+.day-number{
+    font-family:"Quicksand",sans-serif;
+    font-size:13px;
+    font-weight:700;
+    color:#bbb;
+    text-align:right;
+    padding-right:4px;
+    margin-bottom:4px;
+}
+.day-cell.sat-bg .day-number{color:#5a8fb8;}
+.day-cell.sun-bg .day-number{color:#c87070;}
+.day-cell.today .day-number{
+    color:#fff;
+    background:#2a7b9b;
+    display:inline-block;
+    width:24px;
+    height:24px;
+    line-height:24px;
+    text-align:center;
+    border-radius:50%;
+    float:right;
+}
+
+/* ========== イベントチップ ========== */
+.ev-chip{
+    display:block;
+    padding:4px 6px;
+    margin-bottom:3px;
+    border-radius:6px;
+    font-size:10.5px;
+    line-height:1.35;
+    cursor:pointer;
+    transition:all 0.15s;
+    border-left:3px solid transparent;
+    text-decoration:none;
+    color:inherit;
+    word-break:break-word;
+}
+.ev-chip:hover{
+    transform:scale(1.02);
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    z-index:10;
+    position:relative;
+}
+
+/* 会場別カラー */
+.ev-chip.v-tomisato{background:#fce8ed;border-left-color:#e8889e;}
+.ev-chip.v-narita{background:#e4f0fc;border-left-color:#6aa8d8;}
+.ev-chip.v-kamagaya{background:#e6f5e4;border-left-color:#88bb70;}
+
+/* セミナー */
+.ev-chip.seminar{
+    border-left:none;
+    border:1.5px solid #d4a017;
+    border-radius:20px;
+    background:linear-gradient(135deg,#fff8eb,#fef0d0);
+    color:#8a6010;
+    font-weight:600;
+    text-align:center;
+    padding:4px 8px;
+}
+.ev-chip.seminar.v-tomisato{border-color:#e8889e;background:linear-gradient(135deg,#fff0f3,#fce8ed);color:#a0506a;}
+.ev-chip.seminar.v-narita{border-color:#6aa8d8;background:linear-gradient(135deg,#f0f6ff,#e4f0fc);color:#3a6a9a;}
+.ev-chip.seminar.v-kamagaya{border-color:#88bb70;background:linear-gradient(135deg,#f2faf0,#e6f5e4);color:#3a7a30;}
+
+.ev-time{
+    font-family:"Quicksand",sans-serif;
+    font-size:9px;
+    font-weight:700;
+    opacity:0.55;
+    margin-right:2px;
+}
+.ev-venue-label{
+    font-size:9px;
+    font-weight:700;
+    opacity:0.7;
+    margin-right:2px;
+}
+
+/* ========== モーダル ========== */
+.modal-overlay{
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(3px);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+    background:#fff;
+    border-radius:20px;
+    padding:0;
+    max-width:480px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    box-shadow:0 16px 48px rgba(0,0,0,0.15);
+    animation:modalIn 0.3s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-header{
+    padding:24px 24px 16px;
+    position:relative;
+}
+.modal-close{
+    position:absolute;
+    top:16px;
+    right:16px;
+    font-size:20px;
+    cursor:pointer;
+    color:#ccc;
+    background:none;
+    border:none;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 0.2s;
+}
+.modal-close:hover{background:#f5f5f5;color:#888;}
+.modal-genre-tag{
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+.modal-genre-tag.g-ai{background:#e8f4fd;color:#2868a8;}
+.modal-genre-tag.g-security{background:#fce8e8;color:#b83838;}
+.modal-genre-tag.g-business{background:#e4f5e8;color:#1a7a40;}
+.modal-genre-tag.g-photo{background:#fef3e4;color:#b87818;}
+.modal-genre-tag.g-esports{background:#f0e8f8;color:#7838a8;}
+.modal-genre-tag.g-seminar{background:#fff8eb;color:#8a6010;border:1px solid #e8d8a0;}
+.modal-title{
+    font-size:18px;
+    font-weight:700;
+    color:#3a3a3a;
+    line-height:1.5;
+    padding-right:30px;
+}
+.modal-body{
+    padding:0 24px 24px;
+}
+.modal-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    background:#f8f6f3;
+    padding:16px;
+    border-radius:14px;
+    margin-bottom:16px;
+}
+.info-item{}
+.info-label{
+    font-size:10px;
+    color:#aaa;
+    font-weight:600;
+    letter-spacing:0.5px;
+    margin-bottom:2px;
+}
+.info-value{
+    font-size:14px;
+    color:#4a4a4a;
+    font-weight:500;
+}
+.modal-venue-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+}
+.modal-venue-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+/* お申込み案内 */
+.modal-cta{
+    background:linear-gradient(135deg,#f0f8ff,#e8f4fd);
+    border:1.5px solid #c8dff0;
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    margin-top:16px;
+}
+.modal-cta p{
+    font-size:12px;
+    color:#5a8a9a;
+    margin-bottom:8px;
+}
+.modal-cta .cta-phone{
+    font-family:"Quicksand",sans-serif;
+    font-size:22px;
+    font-weight:700;
+    color:#2a7b9b;
+    letter-spacing:1px;
+}
+.modal-cta .cta-location{
+    font-size:11px;
+    color:#888;
+    margin-top:4px;
+}
+
+/* ========== リスト表示 ========== */
+.view-toggle{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-bottom:20px;
+}
+.view-btn{
+    padding:8px 16px;
+    border:1.5px solid #d8d0c8;
+    border-radius:20px;
+    background:#fff;
+    color:#888;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:600;
+    transition:all 0.2s;
+}
+.view-btn.active{
+    background:#2a7b9b;
+    color:#fff;
+    border-color:#2a7b9b;
+}
+.list-view{display:none;}
+.list-view.active{display:block;}
+.calendar-view{display:none;}
+.calendar-view.active{display:block;}
+
+.event-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.event-card{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    background:#fff;
+    padding:16px;
+    border-radius:14px;
+    box-shadow:0 1px 6px rgba(0,0,0,0.04);
+    cursor:pointer;
+    transition:all 0.2s;
+    border:1px solid #f0ede8;
+}
+.event-card:hover{
+    box-shadow:0 4px 16px rgba(0,0,0,0.08);
+    transform:translateY(-1px);
+}
+.event-card-date{
+    flex-shrink:0;
+    width:52px;
+    text-align:center;
+    padding:6px 0;
+}
+.event-card-day{
+    font-family:"Quicksand",sans-serif;
+    font-size:26px;
+    font-weight:700;
+    color:#2a7b9b;
+    line-height:1;
+}
+.event-card-dow{
+    font-size:10px;
+    color:#aaa;
+    font-weight:600;
+    margin-top:2px;
+}
+.event-card-dow.sun{color:#c87070;}
+.event-card-dow.sat{color:#5a8fb8;}
+.event-card-body{
+    flex:1;
+    min-width:0;
+}
+.event-card-title{
+    font-size:14px;
+    font-weight:600;
+    color:#3a3a3a;
+    margin-bottom:4px;
+    line-height:1.4;
+}
+.event-card-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    font-size:11px;
+    color:#999;
+}
+.event-card-meta span{
+    display:flex;
+    align-items:center;
+    gap:3px;
+}
+
+/* ========== フッター ========== */
+.footer{
+    background:#fff;
+    border-top:1px solid #eee;
+    padding:30px 20px;
+    text-align:center;
+    margin-top:40px;
+}
+.footer-brand{
+    font-size:18px;
+    font-weight:700;
+    color:#2a7b9b;
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+.footer-campuses{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    max-width:900px;
+    margin:0 auto 20px;
+}
+.footer-campus{
+    background:#f8f6f3;
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    border-top:3px solid #ccc;
+}
+.footer-campus.fc-tomisato{border-top-color:#e8889e;}
+.footer-campus.fc-narita{border-top-color:#6aa8d8;}
+.footer-campus.fc-kamagaya{border-top-color:#88bb70;}
+.fc-name{
+    font-size:14px;
+    font-weight:700;
+    color:#3a3a3a;
+    margin-bottom:6px;
+}
+.fc-shop{
+    font-size:11px;
+    color:#888;
+    margin-bottom:4px;
+    line-height:1.4;
+}
+.fc-address{
+    font-size:11px;
+    color:#999;
+    margin-bottom:8px;
+    line-height:1.4;
+}
+.fc-phone{
+    font-family:"Quicksand",sans-serif;
+    font-size:20px;
+    font-weight:700;
+    color:#2a7b9b;
+    letter-spacing:0.5px;
+}
+.footer-note{
+    font-size:11px;
+    color:#bbb;
+    margin-top:12px;
+    line-height:1.6;
+}
+@media(max-width:768px){
+    .footer-campuses{grid-template-columns:1fr;max-width:400px;}
+}
+
+/* ========== フィルター ========== */
+.filter-bar{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+}
+.filter-btn{
+    padding:6px 14px;
+    border:1.5px solid #e0dcd8;
+    border-radius:20px;
+    background:#fff;
+    color:#999;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:600;
+    transition:all 0.2s;
+}
+.filter-btn.active{
+    border-color:#2a7b9b;
+    color:#2a7b9b;
+    background:#f0f8ff;
+}
+.filter-btn:hover{
+    border-color:#2a7b9b;
+    color:#2a7b9b;
+}
+
+/* ========== レスポンシブ ========== */
+@media(max-width:768px){
+    .header-inner{gap:10px;}
+    .brand-year{font-size:22px;}
+    .brand-name strong{font-size:16px;}
+    .month-year{font-size:28px;}
+    .day-cell{min-height:80px;padding:3px;}
+    .ev-chip{font-size:9px;padding:2px 4px;}
+    .ev-time{display:none;}
+    .day-number{font-size:11px;}
+    .modal{max-width:100%;border-radius:16px;}
+    .modal-title{font-size:16px;}
+    .container{padding:12px 8px 30px;}
+    .month-btn{padding:8px 14px;font-size:12px;}
+    .event-card{padding:12px;gap:10px;}
+    .event-card-title{font-size:13px;}
+}
+@media(max-width:480px){
+    .day-cell{min-height:65px;padding:2px;}
+    .ev-chip{font-size:8px;padding:1px 3px;border-left-width:2px;}
+    .day-number{font-size:10px;}
+    .calendar-grid{border-radius:10px;}
+    .day-header{padding:6px 2px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+    <div class="header-inner">
+        <div class="brand">
+            <div class="brand-name">
+                <strong>SMART LIFE 北総校</strong>
+            </div>
+        </div>
+        <div class="brand-sub">サークルスケジュール</div>
+    </div>
+</div>
+
+<!-- メインコンテナ -->
+<div class="container">
+
+    <!-- 表示切替 -->
+    <div class="view-toggle">
+        <button class="view-btn active" onclick="setView('calendar')">カレンダー</button>
+        <button class="view-btn" onclick="setView('list')">リスト</button>
+    </div>
+
+    <!-- 会場フィルター -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-venue="all" onclick="setFilter('all',this)">すべて</button>
+        <button class="filter-btn" data-venue="富里" onclick="setFilter('富里',this)">富里</button>
+        <button class="filter-btn" data-venue="成田" onclick="setFilter('成田',this)">成田</button>
+        <button class="filter-btn" data-venue="鎌ヶ谷" onclick="setFilter('鎌ヶ谷',this)">鎌ヶ谷</button>
+    </div>
+
+    <!-- 月ナビ -->
+    <div class="month-nav" id="monthNav"></div>
+
+    <!-- カレンダー表示 -->
+    <div class="calendar-view active" id="calendarView"></div>
+
+    <!-- リスト表示 -->
+    <div class="list-view" id="listView"></div>
+
+</div>
+
+<!-- フッター -->
+<div class="footer">
+    <div class="footer-brand">SMART LIFE 北総校 お問い合わせ</div>
+    <div class="footer-campuses">
+        <div class="footer-campus fc-tomisato">
+            <div class="fc-name">富里キャンパス</div>
+            <div class="fc-shop">ピーシーデポスマートライフ富里インターBASE</div>
+            <div class="fc-address">〒286-0221 千葉県富里市七栄532-117</div>
+            <div class="fc-phone">0476-90-6665</div>
+        </div>
+        <div class="footer-campus fc-narita">
+            <div class="fc-name">成田キャンパス</div>
+            <div class="fc-shop">ピーシーデポスマートライフ成田Club Lounge</div>
+            <div class="fc-address">〒286-0029 千葉県成田市ウイング土屋87</div>
+            <div class="fc-phone">0476-20-2551</div>
+        </div>
+        <div class="footer-campus fc-kamagaya">
+            <div class="fc-name">鎌ケ谷キャンパス</div>
+            <div class="fc-shop">ピーシーデポスマートライフ鎌ヶ谷BASE</div>
+            <div class="fc-address">〒273-0107 千葉県鎌ヶ谷市新鎌ヶ谷4丁目13-9</div>
+            <div class="fc-phone">047-441-5111</div>
+        </div>
+    </div>
+    <div class="footer-note">
+        ※天候等により、開催内容やスケジュールが変更となる可能性がございます。最新情報は随時ご確認ください。<br>
+        ※各講座のお申込みは、店頭またはお電話にて承ります。ご予約はいつもの担当プランナーまで。
+    </div>
+</div>
+
+<!-- モーダル -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalGenre"></div>
+            <div class="modal-title" id="modalTitle"></div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-info" id="modalInfo"></div>
+            <div class="modal-cta" id="modalCta">
+                <p>お申込み・お問い合わせ</p>
+                <div class="cta-phone" id="ctaPhone"></div>
+                <div class="cta-location" id="ctaLocation"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const events = [{"date":"2026-04-04","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"理想のまちをつくろう！楽しみながら学ぶプログラミング的思考　マインクラフト","member":"一般聴講生","folder":"2026-04-04_理想のまちをつくろう！楽しみながら学ぶプログラミング的思考　マインクラフト_富里"},{"date":"2026-04-04","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"予約・お問い合わせを、かんたんに受け取る仕組みづくり（googleフォーム）","member":"DX","folder":"2026-04-04_予約・お問い合わせを、かんたんに受け取る仕組みづくり（googleフォーム）_鎌ヶ谷"},{"date":"2026-04-09","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"SNSの落とし穴から身を守る！今日からできる情報セキュリティ","member":"Lounge","folder":"2026-04-09_SNSの落とし穴から身を守る！今日からできる情報セキュリティ_富里"},{"date":"2026-04-11","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"犯人はAI？守るのもAI！最新詐欺から自分と家族を守る「設定」の基本","member":"一般聴講生","folder":"2026-04-11_犯人はAI？守るのもAI！最新詐欺から自分と家族を守る「設定」の基本_富里"},{"date":"2026-04-12","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"明日から使える！AIプレゼン資料作成～アイデア出しからデザインまでをAIに任せる新常識 with Gemini","member":"DX","folder":"2026-04-12_明日から使える！AIプレゼン資料作成～アイデア出しからデザインまでをAIに任せる_富里"},{"date":"2026-04-12","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"「映える写真」をAIで！スマホで魅せる撮影＆編集テク　with Gemini","member":"一般聴講生","folder":"2026-04-12_「映える写真」をAIで！スマホで魅せる撮影＆編集テク　with Gemini_成田"},{"date":"2026-04-12","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"使うだけから一歩先へ。生成AIで暮らしの質向上 〜片付け編〜","member":"専門聴講生","folder":"2026-04-12_使うだけから一歩先へ。生成AIで暮らしの質向上 〜片付け編〜_鎌ヶ谷"},{"date":"2026-04-15","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"AI活用 超入門編　ChatGPT/Gemini","member":"専門聴講生","folder":"2026-04-15_AI活用 超入門編　ChatGPTGemini_富里"},{"date":"2026-04-18","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"思い出写真をもっと素敵に！AIでかんたん整理＆編集術 Apple Intelligence","member":"一般聴講生","folder":"2026-04-18_思い出写真をもっと素敵に！AIでかんたん整理＆編集術 Apple Intelli_富里"},{"date":"2026-04-19","time":"16:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"SNS時代の新常識！ネットで自分を守る方法","member":"Lounge","folder":"2026-04-19_SNS時代の新常識！ネットで自分を守る方法_成田"},{"date":"2026-04-21","time":"13:00","venue":"鎌ヶ谷","circle":"学びのデジタル安全生活サークル","title":"知っておきたい！今の時代のためのデジタル安全","member":"Lounge","folder":"2026-04-21_知っておきたい！今の時代のためのデジタル安全_鎌ヶ谷"},{"date":"2026-04-23","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"スタッフのSNS運用どうしてる？お店を守る『デジタルルールづくり』相談会","member":"DX","folder":"2026-04-23_スタッフのSNS運用どうしてる？お店を守る『デジタルルールづくり』相談会_富里"},{"date":"2026-04-25","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"スマホでプロ並み！AIアプリで実現する写真撮影＆加工講座　with Gemini","member":"専門聴講生","folder":"2026-04-25_スマホでプロ並み！AIアプリで実現する写真撮影＆加工講座　with Gemini_富里"},{"date":"2026-04-25","time":"16:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"AIでお絵かき！世界にひとつだけの魔法の図鑑をつくろう","member":"専門聴講生","folder":"2026-04-25_AIでお絵かき！世界にひとつだけの魔法の図鑑をつくろう_成田"},{"date":"2026-04-25","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"AIで写真を面白く変身させてみよう","member":"専門聴講生","folder":"2026-04-25_AIで写真を面白く変身させてみよう_鎌ヶ谷"},{"date":"2026-04-28","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"原神で学ぶ創造力！日常を冒険に変えるワークショップ","member":"一般聴講生","folder":"2026-04-28_原神で学ぶ創造力！日常を冒険に変えるワークショップ_鎌ヶ谷"},{"date":"2026-05-01","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"AIを「最高の先生に」Geminiではじめる質問力アップ講座","member":"LOunge","folder":"2026-05-01_AIを「最高の先生に」Geminiではじめる質問力アップ講座_成田"},{"date":"2026-05-02","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"みんなで協力！マイクラ宝探し大冒険","member":"一般聴講生","folder":"2026-05-02_みんなで協力！マイクラ宝探し大冒険_富里"},{"date":"2026-05-03","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"AI勉強術！ChatGPTで要約・整理・暗記効率をぐっとUP！","member":"専門聴講生","folder":"2026-05-03_AI勉強術！ChatGPTで要約・整理・暗記効率をぐっとUP！_富里"},{"date":"2026-05-04","time":"13:00","venue":"鎌ヶ谷","circle":"学びのデジタル安全生活サークル","title":"知っておきたい！今の時代のためのデジタル安全","member":"Lounge","folder":"2026-05-04_知っておきたい！今の時代のためのデジタル安全_鎌ヶ谷"},{"date":"2026-05-05","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"撮って・試して・比べよう！スマホ＆GoPro＆デジカメ撮影体験会","member":"Lounge","folder":"2026-05-05_撮って・試して・比べよう！スマホ＆GoPro＆デジカメ撮影体験会_鎌ヶ谷"},{"date":"2026-05-14","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"初心者でも安心！AIと学ぶGoogleマップ集客・MEO対策講座","member":"DX","folder":"2026-05-14_初心者でも安心！AIと学ぶGoogleマップ集客・MEO対策講座_富里"},{"date":"2026-05-16","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"Canvaでつくる！魅せるチラシ＆POPデザイン講座","member":"DX","folder":"2026-05-16_Canvaでつくる！魅せるチラシ＆POPデザイン講座_鎌ヶ谷"},{"date":"2026-05-17","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"親子で楽しむ！iPadではじめてのAI×プログラミング体験（スクラッチJr）","member":"DX","folder":"2026-05-17_親子で楽しむ！iPadではじめてのAI×プログラミング体験（スクラッチJr）_成田"},{"date":"2026-05-17","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"ゲームで育む！フォートナイトで楽しむ思考力とチームワーク","member":"一般聴講生","folder":"2026-05-17_ゲームで育む！フォートナイトで楽しむ思考力とチームワーク_鎌ヶ谷"},{"date":"2026-05-21","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"「AI詐欺」に騙されないための防衛術 〜最新の手口を学ぶ〜","member":"Lounge","folder":"2026-05-21_「AI詐欺」に騙されないための防衛術 〜最新の手口を学ぶ〜_富里"},{"date":"2026-05-23","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"離れて暮らす家族を見守る。デジタルでつなぐ“安心の絆”講座","member":"一般聴講生","folder":"2026-05-23_離れて暮らす家族を見守る。デジタルでつなぐ“安心の絆”講座_富里"},{"date":"2026-05-23","time":"16:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"その情報、本当に信じて大丈夫？フェイク動画・フェイク画像","member":"Lounge","folder":"2026-05-23_その情報、本当に信じて大丈夫？フェイク動画・フェイク画像_成田"},{"date":"2026-05-24","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"仕事でAI活用！これからはじめる超入門編 Gemini/notebookLM","member":"専門聴講生","folder":"2026-05-24_仕事でAI活用！これからはじめる超入門編 GemininotebookLM_富里"},{"date":"2026-05-24","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"〈AI中級〉使うだけから一歩先へ。生成AIで暮らしの質向上","member":"専門聴講生","folder":"2026-05-24_〈AI中級〉使うだけから一歩先へ。生成AIで暮らしの質向上_鎌ヶ谷"},{"date":"2026-05-30","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"「おもいで箱」でかんたん写真整理術","member":"一般聴講生","folder":"2026-05-30_「おもいで箱」でかんたん写真整理術_富里"},{"date":"2026-05-31","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"Geminiでつくる！AIが叶える魅力的な写真加工","member":"専門聴講生","folder":"2026-05-31_Geminiでつくる！AIが叶える魅力的な写真加工_富里"},{"date":"2026-06-04","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"予約電話から解放！AIを使って予約をできるようにしてみよう","member":"専門聴講生","folder":"2026-06-04_予約電話から解放！AIを使って予約をできるようにしてみよう_富里"},{"date":"2026-06-06","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"成田から世界一周！Google Earthでプチ冒険の旅へ出かけよう","member":"専門聴講生","folder":"2026-06-06_成田から世界一周！Google Earthでプチ冒険の旅へ出かけよう_成田"},{"date":"2026-06-07","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"家族で楽しむ！AIでスマホ写真をかわいくアレンジしよう  ChatGPT","member":"専門聴講生","folder":"2026-06-07_家族で楽しむ！AIでスマホ写真をかわいくアレンジしよう  ChatGPT_鎌ヶ谷"},{"date":"2026-06-13","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"Robloxでロジカルシンキングゲーム体験","member":"一般聴講生","folder":"2026-06-13_Robloxでロジカルシンキングゲーム体験_富里"},{"date":"2026-06-13","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"親子で楽しむ！家庭の分担リスト","member":"専門聴講生","folder":"2026-06-13_親子で楽しむ！家庭の分担リスト_成田"},{"date":"2026-06-13","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜","member":"一般聴講生","folder":"2026-06-13_プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜_鎌ヶ谷"},{"date":"2026-06-14","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"AI動画生成ツールで魅力アップ！簡単PR動画制作 with NotebookLM","member":"DX","folder":"2026-06-14_AI動画生成ツールで魅力アップ！簡単PR動画制作 with NotebookLM_富里"},{"date":"2026-06-15","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"AIに聞いてみよう！我が家の献立アイデア with Gemini","member":"","folder":"2026-06-15_AIに聞いてみよう！我が家の献立アイデア with Gemini_鎌ヶ谷"},{"date":"2026-06-18","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"そのメッセージ、本当に大丈夫？「なりすまし・詐欺」を未然に防ぐ見分け方講座","member":"Lounge","folder":"2026-06-18_そのメッセージ、本当に大丈夫？「なりすまし・詐欺」を未然に防ぐ見分け方講座_富里"},{"date":"2026-06-20","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"旅先でも安心！公共Wi-Fiの落とし穴と、安全な「Car Play・旅行デバイス」活用法","member":"一般聴講生","folder":"2026-06-20_旅先でも安心！公共Wi-Fiの落とし穴と、安全な「Car Play・旅行デバイス_富里"},{"date":"2026-06-20","time":"15:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"子供のデジタル教育と家族のルール作り","member":"Lounge","folder":"2026-06-20_子供のデジタル教育と家族のルール作り_成田"},{"date":"2026-06-20","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"デザインが苦手でも、選んで変えるだけ！伝わるチラシを作ろう（canva）","member":"","folder":"2026-06-20_デザインが苦手でも、選んで変えるだけ！伝わるチラシを作ろう（canva）_鎌ヶ谷"},{"date":"2026-06-21","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"まるで魔法！描いた絵を動かしてみよう　with Gemini","member":"専門聴講生","folder":"2026-06-21_まるで魔法！描いた絵を動かしてみよう　with Gemini_富里"},{"date":"2026-06-25","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"影と光を使っていつもとは違う写真表現を学んでみよう","member":"一般聴講生","folder":"2026-06-25_影と光を使っていつもとは違う写真表現を学んでみよう_富里"},{"date":"2026-06-27","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"写真と短い動画で、日常を楽しく残そう（Instagram体験）","member":"","folder":"2026-06-27_写真と短い動画で、日常を楽しく残そう（Instagram体験）_鎌ヶ谷"},{"date":"2026-06-28","time":"17:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"商店主・個人事業主交流会","member":"専門聴講生","folder":"2026-06-28_商店主・個人事業主交流会_富里"},{"date":"2026-07-04","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"AIで旅行やお出かけ先の計画を立ててみよう","member":"","folder":"2026-07-04_AIで旅行やお出かけ先の計画を立ててみよう_鎌ヶ谷"},{"date":"2026-07-04","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"親子で楽しめるAIクイズ作成体験　Gemini","member":"専門聴講生","folder":"2026-07-04_親子で楽しめるAIクイズ作成体験　Gemini_成田"},{"date":"2026-07-05","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"暮らしの「うっかり」をAIが解決。Apple WatchとAIで整える健康習慣サークル","member":"","folder":"2026-07-05_暮らしの「うっかり」をAIが解決。Apple WatchとAIで整える健康習慣サ_富里"},{"date":"2026-07-09","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"3ステップで完成！Googleフォームで始める“売れるアンケート”講座","member":"専門聴講生","folder":"2026-07-09_3ステップで完成！Googleフォームで始める“売れるアンケート”講座_富里"},{"date":"2026-07-11","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"世界発見ラボ：GeoGusessrで学ぶ地理と文化","member":"一般聴講生","folder":"2026-07-11_世界発見ラボ：GeoGusessrで学ぶ地理と文化_富里"},{"date":"2026-07-11","time":"15:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"AI導入の基礎知識：安全な活用のためのルールとマナー","member":"","folder":"2026-07-11_AI導入の基礎知識：安全な活用のためのルールとマナー_成田"},{"date":"2026-07-12","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"〈AI中級〉AIを使えば時間大幅短縮！考えをまとめる→プレゼン作成","member":"","folder":"2026-07-12_〈AI中級〉AIを使えば時間大幅短縮！考えをまとめる→プレゼン作成_鎌ヶ谷"},{"date":"2026-07-12","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"GoogleLensを活用！親子で不思議な生き物調査隊","member":"","folder":"2026-07-12_GoogleLensを活用！親子で不思議な生き物調査隊_成田"},{"date":"2026-07-16","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"AIを最高のパートナーにするために。今日から始める安全な活用方法","member":"Lounge","folder":"2026-07-16_AIを最高のパートナーにするために。今日から始める安全な活用方法_富里"},{"date":"2026-07-19","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"Googleフォームでアンケートを作ろう","member":"専門聴講生","folder":"2026-07-19_Googleフォームでアンケートを作ろう_富里"},{"date":"2026-07-19","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"みんなで協力！マイクラ宝探し大冒険","member":"","folder":"2026-07-19_みんなで協力！マイクラ宝探し大冒険_鎌ヶ谷"},{"date":"2026-07-20","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"〈AI中級〉使うだけから一歩先へ。生成AIで暮らしの質向上","member":"","folder":"2026-07-20_〈AI中級〉使うだけから一歩先へ。生成AIで暮らしの質向上_鎌ヶ谷"},{"date":"2026-07-23","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"写真整理を学ぼう","member":"","folder":"2026-07-23_写真整理を学ぼう_富里"},{"date":"2026-07-25","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"「AIを使った制作物」の注意点","member":"一般聴講生","folder":"2026-07-25_「AIを使った制作物」の注意点_富里"},{"date":"2026-07-26","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"タブレット1台でOJTが変わる！『デジタルチェックリスト』で教え漏れを防ぐ実践会","member":"一般聴講生","folder":"2026-07-26_タブレット1台でOJTが変わる！『デジタルチェックリスト』で教え漏れを防ぐ実践会_富里"},{"date":"2026-07-26","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"この写真どこだっけ？はもう卒業。アルバム整理術（iPhone向け）","member":"","folder":"2026-07-26_この写真どこだっけ？はもう卒業。アルバム整理術（iPhone向け）_鎌ヶ谷"},{"date":"2026-08-02","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"AI活用で日常の悩みを解決〜旅行編〜","member":"専門聴講生","folder":"2026-08-02_AI活用で日常の悩みを解決〜旅行編〜_富里"},{"date":"2026-08-03","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"これを知ればもっと撮りたくなる！iPhoneカメラ活用術","member":"","folder":"2026-08-03_これを知ればもっと撮りたくなる！iPhoneカメラ活用術_鎌ヶ谷"},{"date":"2026-08-06","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"「AI検索」を安全に使おう：その回答、信じて大丈夫？根拠の確認法","member":"Lounge","folder":"2026-08-06_「AI検索」を安全に使おう：その回答、信じて大丈夫？根拠の確認法_富里"},{"date":"2026-08-08","time":"13:00","venue":"鎌ヶ谷","circle":"学びのデジタル安全生活サークル","title":"知っておきたい！今の時代のためのデジタル安全","member":"","folder":"2026-08-08_知っておきたい！今の時代のためのデジタル安全_鎌ヶ谷"},{"date":"2026-08-11","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"親子でチャレンジ！AIでお絵描き＆わくわく旅作りワークショップ　Gemini・ChatGPT","member":"専門聴講生","folder":"2026-08-11_親子でチャレンジ！AIでお絵描き＆わくわく旅作りワークショップ　Gemini・C_富里"},{"date":"2026-08-13","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"AI分析 × Googleフォームで次の一手を発見するアンケート活用講座　GoogleWorkSpace","member":"DX","folder":"2026-08-13_AI分析 × Googleフォームで次の一手を発見するアンケート活用講座　Goo_富里"},{"date":"2026-08-13","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"家族で楽しむ！AIでスマホの写真アレンジ","member":"","folder":"2026-08-13_家族で楽しむ！AIでスマホの写真アレンジ_鎌ヶ谷"},{"date":"2026-08-15","time":"15:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"「子供とAI」を安全に使おう：正しく怖がり、賢く伸ばす。親子で学ぶリテラシー","member":"","folder":"2026-08-15_「子供とAI」を安全に使おう：正しく怖がり、賢く伸ばす。親子で学ぶリテラシー_成田"},{"date":"2026-08-21","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"ショートフォトムービー制作","member":"一般聴講生","folder":"2026-08-21_ショートフォトムービー制作_富里"},{"date":"2026-08-22","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"誰でも簡単！はじめてのWebサイト作成入門！　Google　Workspace","member":"DX","folder":"2026-08-22_誰でも簡単！はじめてのWebサイト作成入門！　Google　Workspace_富里"},{"date":"2026-08-22","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"〈canva中級〉エフェクトや素材を駆使！さらに伝わるチラシ作り","member":"","folder":"2026-08-22_〈canva中級〉エフェクトや素材を駆使！さらに伝わるチラシ作り_鎌ヶ谷"},{"date":"2026-08-23","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜","member":"一般聴講生","folder":"2026-08-23_プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜_富里"},{"date":"2026-08-23","time":"16:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"写真が動き出す？おうちの魔法使いになろう！","member":"","folder":"2026-08-23_写真が動き出す？おうちの魔法使いになろう！_成田"},{"date":"2026-08-29","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"「おうちのAI」を安全に使おう：写真や名前、入力して大丈夫？家族を守る3つの約束","member":"一般聴講生","folder":"2026-08-29_「おうちのAI」を安全に使おう：写真や名前、入力して大丈夫？家族を守る3つの約束_富里"},{"date":"2026-08-29","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"ゲームを通して、考える力・チームワークを楽しもう「フォートナイト」","member":"","folder":"2026-08-29_ゲームを通して、考える力・チームワークを楽しもう「フォートナイト」_鎌ヶ谷"},{"date":"2026-08-29","time":"16:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"AIで「なつやすみお便りフォト」作成","member":"","folder":"2026-08-29_AIで「なつやすみお便りフォト」作成_成田"},{"date":"2026-09-05","time":"13:00","venue":"鎌ヶ谷","circle":"学びの写真メディア活用サークル","title":"写真と短い動画で、日常を楽しく残そう（Instagram体験）","member":"","folder":"2026-09-05_写真と短い動画で、日常を楽しく残そう（Instagram体験）_鎌ヶ谷"},{"date":"2026-09-06","time":"13:00","venue":"富里","circle":"学びのE-Sportsサークル","title":"リズム×論理思考〜太鼓で学ぶ集中と運動分析〜","member":"","folder":"2026-09-06_リズム×論理思考〜太鼓で学ぶ集中と運動分析〜_富里"},{"date":"2026-09-10","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"明日から使える！AIプレゼン資料作成～アイデア出しからデザインまでをAIに任せる新常識","member":"","folder":"2026-09-10_明日から使える！AIプレゼン資料作成～アイデア出しからデザインまでをAIに任せる_富里"},{"date":"2026-09-12","time":"15:00","venue":"成田","circle":"学びのデジタル安全生活サークル","title":"「2030年、あなたのお宅のデジタル環境はどう変わる？〜今から始める家族の安全投資〜」","member":"","folder":"2026-09-12_「2030年、あなたのお宅のデジタル環境はどう変わる？〜今から始める家族の安全投_成田"},{"date":"2026-09-13","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"AIに聞いてみよう！我が家の献立アイデア","member":"","folder":"2026-09-13_AIに聞いてみよう！我が家の献立アイデア_鎌ヶ谷"},{"date":"2026-09-14","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"時間管理とタスク管理のデジタル術 with NotebookLM","member":"","folder":"2026-09-14_時間管理とタスク管理のデジタル術 with NotebookLM_富里"},{"date":"2026-09-17","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"2030年、あなたのお宅のデジタル環境はどう変わる？〜今から始める家族の安全投資〜","member":"","folder":"2026-09-17_2030年、あなたのお宅のデジタル環境はどう変わる？〜今から始める家族の安全投資_富里"},{"date":"2026-09-17","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"AIと一緒に見つける、わが家の『新しい定番』〜献立作りから旅行計画まで〜","member":"","folder":"2026-09-17_AIと一緒に見つける、わが家の『新しい定番』〜献立作りから旅行計画まで〜_成田"},{"date":"2026-09-19","time":"13:00","venue":"富里","circle":"学びの写真メディア活用サークル","title":"写真で自己紹介ギャラリー 写真整理協会","member":"","folder":"2026-09-19_写真で自己紹介ギャラリー 写真整理協会_富里"},{"date":"2026-09-20","time":"13:00","venue":"富里","circle":"学びの商店主・個人事業主サークル","title":"初心者からでも安心！AIと一緒に学ぶ、Googleマップ集客MEO対策 勉強会","member":"","folder":"2026-09-20_初心者からでも安心！AIと一緒に学ぶ、Googleマップ集客MEO対策 勉強会_富里"},{"date":"2026-09-20","time":"13:00","venue":"鎌ヶ谷","circle":"学びのAIくらし活用サークル","title":"〈AI中級〉AIでダイエット成功?!身体管理のコツ","member":"","folder":"2026-09-20_〈AI中級〉AIでダイエット成功!身体管理のコツ_鎌ヶ谷"},{"date":"2026-09-26","time":"13:00","venue":"富里","circle":"学びのデジタル安全生活サークル","title":"AIって何ができるの？危険じゃないの？〜お茶の間で役立つ、失敗しないためのAIリテラシー入門〜","member":"","folder":"2026-09-26_AIって何ができるの？危険じゃないの？〜お茶の間で役立つ、失敗しないためのAIリ_富里"},{"date":"2026-09-26","time":"13:00","venue":"鎌ヶ谷","circle":"学びの商店主・個人事業主サークル","title":"初めてのwebサイト作成入門","member":"","folder":"2026-09-26_初めてのwebサイト作成入門_鎌ヶ谷"},{"date":"2026-09-26","time":"15:00","venue":"成田","circle":"学びのAIくらし活用サークル","title":"スマホのコンシェルジュ『Gemini』と仲良くなろう！〜暮らしの困りごと解決サークル〜","member":"","folder":"2026-09-26_スマホのコンシェルジュ『Gemini』と仲良くなろう！〜暮らしの困りごと解決サー_成田"},{"date":"2026-09-27","time":"13:00","venue":"富里","circle":"学びのAIくらし活用サークル","title":"私をアップデート！毎日がもっと輝く『やることリスト』 with Gemini","member":"","folder":"2026-09-27_私をアップデート！毎日がもっと輝く『やることリスト』 with Gemini_富里"},{"date":"2026-09-27","time":"13:00","venue":"鎌ヶ谷","circle":"学びのE-Sportsサークル","title":"プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜","member":"","folder":"2026-09-27_プログラミング学習〜スクラッチで自分だけのゲームを作ってみよう〜_鎌ヶ谷"},{"date":"2026-04-15","time":"11:00","venue":"鎌ヶ谷","circle":"AI実践セミナー","title":"生成AI活用＆実践セミナー","member":"","type":"seminar","folder":"2026-04-15_生成AI活用＆実践セミナー_鎌ヶ谷"},{"date":"2026-04-19","time":"13:00","venue":"鎌ヶ谷","circle":"AI体験会","title":"生成AI体験会","member":"","type":"seminar","folder":"2026-04-19_生成AI体験会_鎌ヶ谷"},{"date":"2026-04-22","time":"10:00","venue":"富里","circle":"AI実践セミナー","title":"生成AI活用＆実践セミナー","member":"","type":"seminar","folder":"2026-04-22_生成AI活用＆実践セミナー_富里"},{"date":"2026-04-26","time":"13:00","venue":"富里","circle":"AI体験会","title":"GWを楽しもう！生成AI体験会","member":"","type":"seminar","folder":"2026-04-26_GWを楽しもう！生成AI体験会_富里"},{"date":"2026-04-29","time":"14:00","venue":"鎌ヶ谷","circle":"AI体験会","title":"生成AI体験会","member":"","type":"seminar","folder":"2026-04-29_生成AI体験会_鎌ヶ谷"},{"date":"2026-05-03","time":"11:00","venue":"鎌ヶ谷","circle":"AI体験会","title":"生成AI体験会","member":"","type":"seminar","folder":"2026-05-03_生成AI体験会_鎌ヶ谷"},{"date":"2026-05-09","time":"11:00","venue":"鎌ヶ谷","circle":"AI実践セミナー","title":"生成AI活用＆実践セミナー","member":"","type":"seminar","folder":"2026-05-09_生成AI活用＆実践セミナー_鎌ヶ谷"},{"date":"2026-05-13","time":"15:00","venue":"富里","circle":"AI実践セミナー","title":"事業主交流会＆実践セミナー","member":"","type":"seminar","folder":"2026-05-13_事業主交流会＆実践セミナー_富里"},{"date":"2026-05-20","time":"11:00","venue":"鎌ヶ谷","circle":"AI実践セミナー","title":"生成AI活用＆実践セミナー","member":"","type":"seminar","folder":"2026-05-20_生成AI活用＆実践セミナー_鎌ヶ谷"},{"date":"2026-05-26","time":"10:00","venue":"富里","circle":"AI実践セミナー","title":"生成AI活用＆実践セミナー","member":"","type":"seminar","folder":"2026-05-26_生成AI活用＆実践セミナー_富里"}];
+
+const months = ['2026-04','2026-05','2026-06','2026-07','2026-08','2026-09'];
+const monthNames = {
+    '2026-04':['APRIL','4月'],'2026-05':['MAY','5月'],'2026-06':['JUNE','6月'],
+    '2026-07':['JULY','7月'],'2026-08':['AUGUST','8月'],'2026-09':['SEPTEMBER','9月']
+};
+const dowJa = ['日','月','火','水','木','金','土'];
+let currentFilter = 'all';
+let currentView = 'calendar';
+
+function venueClass(v) {
+    if(v.includes('富里')) return 'v-tomisato';
+    if(v.includes('成田')) return 'v-narita';
+    if(v.includes('鎌ヶ谷')) return 'v-kamagaya';
+    return '';
+}
+function venueColor(v) {
+    if(v.includes('富里')) return '#e8889e';
+    if(v.includes('成田')) return '#6aa8d8';
+    if(v.includes('鎌ヶ谷')) return '#88bb70';
+    return '#ccc';
+}
+function genreTag(circle) {
+    if(circle.includes('AI') && !circle.includes('セミナー') && !circle.includes('体験')) return ['AI活用','g-ai'];
+    if(circle.includes('安全') || circle.includes('セキュリティ')) return ['セキュリティ','g-security'];
+    if(circle.includes('商店') || circle.includes('事業')) return ['ビジネス・DX','g-business'];
+    if(circle.includes('写真') || circle.includes('メディア')) return ['写真・メディア','g-photo'];
+    if(circle.includes('Sports') || circle.includes('スポーツ')) return ['E-Sports','g-esports'];
+    if(circle.includes('セミナー') || circle.includes('体験')) return ['セミナー・体験会','g-seminar'];
+    return ['講座','g-ai'];
+}
+
+function filteredEvents() {
+    if(currentFilter==='all') return events;
+    return events.filter(e=>e.venue===currentFilter);
+}
+
+// 月ナビ生成
+function buildMonthNav() {
+    const nav = document.getElementById('monthNav');
+    nav.innerHTML = months.map((m,i)=>
+        `<button class="month-btn${i===0?' active':''}" onclick="showMonth('${m}')">${monthNames[m][0]}<span style="font-size:10px;opacity:0.6;margin-left:4px;">${monthNames[m][1]}</span></button>`
+    ).join('');
+}
+
+// カレンダー生成
+function buildCalendars() {
+    const container = document.getElementById('calendarView');
+    const fe = filteredEvents();
+    container.innerHTML = months.map((m,idx)=>{
+        const [y, mo] = m.split('-').map(Number);
+        const first = new Date(y, mo-1, 1);
+        const last = new Date(y, mo, 0);
+        const startDow = first.getDay(); // 0=Sun
+        // 月曜始まり
+        const startOffset = (startDow + 6) % 7;
+        const totalDays = last.getDate();
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+
+        // Group events by date
+        const evByDate = {};
+        fe.forEach(e=>{
+            if(e.date.startsWith(m)){
+                const d = parseInt(e.date.split('-')[2]);
+                if(!evByDate[d]) evByDate[d]=[];
+                evByDate[d].push(e);
+            }
+        });
+
+        let html = `<div class="calendar-section${idx===0?' active':''}" id="month-${m}">`;
+        html += `<div class="calendar-month-header"><div class="calendar-month-title"><div class="month-year">${monthNames[m][0]}</div><div class="month-ja">${monthNames[m][1]}</div></div><div class="venue-legend"><div class="venue-legend-item"><div class="venue-dot" style="background:#e8889e;"></div>富里</div><div class="venue-legend-item"><div class="venue-dot" style="background:#6aa8d8;"></div>成田</div><div class="venue-legend-item"><div class="venue-dot" style="background:#88bb70;"></div>鎌ヶ谷</div><div class="venue-legend-item"><span style="display:inline-block;width:24px;height:12px;border-radius:8px;border:1.5px solid #d4a017;background:linear-gradient(135deg,#fff8eb,#fef0d0);"></span>セミナー</div></div></div>`;
+        html += '<div class="calendar-grid">';
+        // Headers (Mon-Sun)
+        const headers = ['月','火','水','木','金','土','日'];
+        const hClasses = ['mon','','','','','sat','sun'];
+        headers.forEach((h,i)=>{
+            html += `<div class="day-header ${hClasses[i]}">${h}</div>`;
+        });
+        // Empty cells before first day
+        for(let i=0;i<startOffset;i++) html += '<div class="day-cell empty"></div>';
+        // Days
+        for(let d=1;d<=totalDays;d++) {
+            const dateStr = `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const dow = new Date(y, mo-1, d).getDay();
+            let cls = 'day-cell';
+            if(dow===0) cls += ' sun-bg';
+            if(dow===6) cls += ' sat-bg';
+            if(dateStr === todayStr) cls += ' today';
+            html += `<div class="${cls}">`;
+            html += `<div class="day-number">${d}</div>`;
+            if(evByDate[d]) {
+                evByDate[d].forEach(ev=>{
+                    const vc = venueClass(ev.venue);
+                    const isSem = ev.type==='seminar';
+                    const chipCls = isSem ? `ev-chip seminar ${vc}` : `ev-chip ${vc}`;
+                    html += `<div class="${chipCls}" onclick='openModal(${JSON.stringify(ev).replace(/'/g,"\\'")})'>`;
+                    html += `<span class="ev-time">${ev.time}</span>`;
+                    html += `<span class="ev-venue-label">${ev.venue}</span> `;
+                    html += ev.title;
+                    html += '</div>';
+                });
+            }
+            html += '</div>';
+        }
+        // Empty cells after last day
+        const endDow = (startOffset + totalDays) % 7;
+        if(endDow > 0) for(let i=endDow;i<7;i++) html += '<div class="day-cell empty"></div>';
+        html += '</div></div>';
+        return html;
+    }).join('');
+}
+
+// リスト生成
+function buildList() {
+    const container = document.getElementById('listView');
+    const fe = filteredEvents();
+    container.innerHTML = months.map((m,idx)=>{
+        const monthEvents = fe.filter(e=>e.date.startsWith(m));
+        if(monthEvents.length === 0) return '';
+        let html = `<div class="calendar-section${idx===0?' active':''}" id="list-${m}">`;
+        html += `<div class="calendar-month-title" style="margin-bottom:12px;"><div class="month-year">${monthNames[m][0]}</div><div class="month-ja">${monthNames[m][1]}</div></div>`;
+        html += '<div class="event-list">';
+        monthEvents.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+        monthEvents.forEach(ev=>{
+            const d = new Date(ev.date+'T00:00:00');
+            const day = d.getDate();
+            const dow = dowJa[d.getDay()];
+            const dowCls = d.getDay()===0?'sun':d.getDay()===6?'sat':'';
+            const [tag, tagCls] = genreTag(ev.circle);
+            html += `<div class="event-card" onclick='openModal(${JSON.stringify(ev).replace(/'/g,"\\'")})'>`;
+            html += `<div class="event-card-date"><div class="event-card-day">${day}</div><div class="event-card-dow ${dowCls}">${dow}</div></div>`;
+            html += '<div class="event-card-body">';
+            html += `<div class="event-card-title">${ev.title}</div>`;
+            html += '<div class="event-card-meta">';
+            html += `<span style="color:${venueColor(ev.venue)};">● ${ev.venue}</span>`;
+            html += `<span>${ev.time}～</span>`;
+            html += `<span class="modal-genre-tag ${tagCls}" style="padding:2px 8px;font-size:10px;">${tag}</span>`;
+            html += '</div></div></div>';
+        });
+        html += '</div></div>';
+        return html;
+    }).join('');
+}
+
+function showMonth(m) {
+    const prefix = currentView==='calendar' ? 'month-' : 'list-';
+    document.querySelectorAll('.calendar-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.month-btn').forEach(b=>b.classList.remove('active'));
+    const el = document.getElementById(prefix+m);
+    if(el) el.classList.add('active');
+    const idx = months.indexOf(m);
+    document.querySelectorAll('.month-btn')[idx]?.classList.add('active');
+}
+
+function setView(v) {
+    currentView = v;
+    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+    if(v==='calendar') {
+        document.getElementById('calendarView').classList.add('active');
+        document.getElementById('listView').classList.remove('active');
+        document.querySelectorAll('.view-btn')[0].classList.add('active');
+    } else {
+        document.getElementById('calendarView').classList.remove('active');
+        document.getElementById('listView').classList.add('active');
+        document.querySelectorAll('.view-btn')[1].classList.add('active');
+    }
+    // Re-activate current month
+    const activeBtn = document.querySelector('.month-btn.active');
+    if(activeBtn) activeBtn.click();
+}
+
+function setFilter(venue, btn) {
+    currentFilter = venue;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    buildCalendars();
+    buildList();
+    // Re-activate current month
+    const activeIdx = [...document.querySelectorAll('.month-btn')].findIndex(b=>b.classList.contains('active'));
+    if(activeIdx>=0) showMonth(months[activeIdx]);
+}
+
+const campusInfo = {
+    '富里': { name:'富里キャンパス', shop:'ピーシーデポスマートライフ富里インターBASE', address:'〒286-0221 千葉県富里市七栄532-117', phone:'0476-90-6665' },
+    '成田': { name:'成田キャンパス', shop:'ピーシーデポスマートライフ成田Club Lounge', address:'〒286-0029 千葉県成田市ウイング土屋87', phone:'0476-20-2551' },
+    '鎌ヶ谷': { name:'鎌ケ谷キャンパス', shop:'ピーシーデポスマートライフ鎌ヶ谷BASE', address:'〒273-0107 千葉県鎌ヶ谷市新鎌ヶ谷4丁目13-9', phone:'047-441-5111' }
+};
+function openModal(ev) {
+    const [tag, tagCls] = genreTag(ev.circle);
+    document.getElementById('modalGenre').innerHTML =
+        `<span class="modal-genre-tag ${tagCls}">${ev.type==='seminar'?'⭐ ':''}${tag}</span>`;
+    document.getElementById('modalTitle').textContent = ev.title;
+    document.getElementById('modalInfo').innerHTML =
+        `<div><div class="info-label">開催日</div><div class="info-value">${ev.date.replace(/-/g,'.')}</div></div>` +
+        `<div><div class="info-label">時間</div><div class="info-value">${ev.time}～</div></div>` +
+        `<div><div class="info-label">会場</div><div class="info-value"><span class="modal-venue-badge"><span class="modal-venue-dot" style="background:${venueColor(ev.venue)};"></span>${ev.venue}</span></div></div>` +
+        `<div><div class="info-label">サークル</div><div class="info-value" style="font-size:12px;">${ev.circle}</div></div>`;
+    const ci = campusInfo[ev.venue] || campusInfo['富里'];
+    document.getElementById('ctaPhone').textContent = ci.phone;
+    document.getElementById('ctaLocation').innerHTML = ci.name + '<br>' + ci.shop;
+    document.getElementById('modal').classList.add('show');
+}
+function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+// 初期化
+buildMonthNav();
+buildCalendars();
+buildList();
+</script>
+</body>
+</html>
