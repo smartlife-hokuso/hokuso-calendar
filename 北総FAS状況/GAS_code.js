@@ -200,8 +200,15 @@ function readMyLog(e) {
   for (var r = 1; r < data.length; r++) {
     var logName = data[r][1] ? data[r][1].toString().replace(/\s/g, "") : "";
     if (logName !== name.replace(/\s/g, "")) continue;
+    var dateVal = data[r][0];
+    var dateStr = "";
+    if (dateVal instanceof Date) {
+      dateStr = Utilities.formatDate(dateVal, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+    } else {
+      dateStr = dateVal ? dateVal.toString() : "";
+    }
     logs.push({
-      date: data[r][0] ? data[r][0].toString() : "",
+      date: dateStr,
       item: data[r][2] ? data[r][2].toString() : "",
       oldVal: data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0,
       newVal: data[r][4] !== null && data[r][4] !== undefined && data[r][4] !== "" ? data[r][4] : (data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0)
@@ -223,8 +230,15 @@ function readLog(e) {
   var data = logSheet.getDataRange().getValues();
   var logs = [];
   for (var r = 1; r < data.length; r++) {
+    var dateVal = data[r][0];
+    var dateStr = "";
+    if (dateVal instanceof Date) {
+      dateStr = Utilities.formatDate(dateVal, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+    } else {
+      dateStr = dateVal ? dateVal.toString() : "";
+    }
     logs.push({
-      date: data[r][0] ? data[r][0].toString() : "",
+      date: dateStr,
       name: data[r][1] ? data[r][1].toString() : "",
       item: data[r][2] ? data[r][2].toString() : "",
       oldVal: data[r][3] !== null && data[r][3] !== "" ? data[r][3] : 0,
