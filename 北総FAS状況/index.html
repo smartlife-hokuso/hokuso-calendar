@@ -240,6 +240,11 @@ body {
             <div class="lbl">総担当軒数</div>
         </div>
         <div class="icon-stat">
+            <div class="ic" style="background: linear-gradient(135deg, #e07c4a, #e0a56b);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div class="num" id="sAO">-</div>
+            <div class="lbl">総AO生数</div>
+        </div>
+        <div class="icon-stat">
             <div class="ic ic-vc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div class="num" id="sVC">-</div>
             <div class="lbl">総DX数</div>
@@ -405,7 +410,7 @@ body {
 </div>
 
 <script>
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwh8UQaDFCGiXl2pgEdhVeZvySirQL8hzedtfKjc3malwWO_TQ5AuFvxN2Q9C4SomLERQ/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwiHWZf5n-MrGvB__oejC4M-zTXh5UKIeZ1nymOgdVn2cQKFV4oqSm3fszPxDQFB461xQ/exec";
 
 function filter() {
     const q = document.getElementById('q').value.toLowerCase();
@@ -432,7 +437,7 @@ function loadTotals() {
 
 function onTotalsLoaded(data) {
     var planners = data.planners || data;
-    var totalCust = 0, totalDX = 0;
+    var totalCust = 0, totalDX = 0, totalAO = 0;
 
     document.querySelectorAll('.p-icon').forEach(function(el) {
         var name = el.dataset.n;
@@ -446,6 +451,7 @@ function onTotalsLoaded(data) {
 
         totalCust += cust;
         totalDX += dx;
+        totalAO += ao;
 
         var nums = el.querySelector('.nums');
         if (nums) {
@@ -457,6 +463,7 @@ function onTotalsLoaded(data) {
     });
 
     document.getElementById('sCust').textContent = totalCust;
+    document.getElementById('sAO').textContent = totalAO;
     document.getElementById('sVC').textContent = totalDX;
 }
 

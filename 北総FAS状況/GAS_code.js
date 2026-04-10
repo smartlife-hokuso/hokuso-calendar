@@ -70,7 +70,7 @@ function readTotals() {
     if (item) itemRows[item] = r;
   }
 
-  var totalCust = 0, totalVC = 0;
+  var totalCust = 0, totalVC = 0, totalAO = 0;
   var planners = {};
 
   for (var c = 3; c < nameRow.length; c++) {
@@ -79,15 +79,18 @@ function readTotals() {
     var nameKey = name.replace(/\s/g, "");
     var cust = Number(allData[itemRows["担当軒数"]] ? allData[itemRows["担当軒数"]][c] : 0) || 0;
     var people = Number(allData[itemRows["担当人数"]] ? allData[itemRows["担当人数"]][c] : 0) || 0;
-    var ao = Number(allData[itemRows["内AO生"]] ? allData[itemRows["内AO生"]][c] : 0) || 0;
+    var ippan = Number(allData[itemRows["内一般聴講生軒数"]] ? allData[itemRows["内一般聴講生軒数"]][c] : 0) || 0;
+    var senmon = Number(allData[itemRows["内専門聴講生軒数"]] ? allData[itemRows["内専門聴講生軒数"]][c] : 0) || 0;
     var dx = Number(allData[itemRows["内DX会員軒数"]] ? allData[itemRows["内DX会員軒数"]][c] : 0) || 0;
+    var ao = ippan + senmon + dx;
 
     totalCust += cust;
     totalVC += dx;
+    totalAO += ao;
     planners[nameKey] = { cust: cust, people: people, ao: ao, dx: dx };
   }
 
-  return { totalCust: totalCust, totalVC: totalVC, planners: planners };
+  return { totalCust: totalCust, totalVC: totalVC, totalAO: totalAO, planners: planners };
 }
 
 function saveData(e) {
