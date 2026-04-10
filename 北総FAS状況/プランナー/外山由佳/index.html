@@ -459,11 +459,12 @@ function onMyLogLoaded(data) {
         area.innerHTML = '<div class="history-empty">まだ変更履歴がありません</div>';
         return;
     }
-    // 変更があった項目のみフィルター
+    // 値が0→0以外はすべて表示（初回入力も含む）
     var changed = [];
     for (var i = 0; i < data.logs.length; i++) {
         var log = data.logs[i];
-        if (String(log.oldVal) !== String(log.newVal)) changed.push(log);
+        if (Number(log.oldVal) === 0 && Number(log.newVal) === 0) continue;
+        changed.push(log);
     }
     if (changed.length === 0) {
         area.innerHTML = '<div class="history-empty">まだ変更履歴がありません</div>';
