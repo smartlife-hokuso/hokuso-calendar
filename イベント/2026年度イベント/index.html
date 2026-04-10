@@ -637,7 +637,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyjdghLdeVywGhH9wkb0JRXWkg1O6Z2GW131oANSEzyXDEiWUiWyi6nBd26Re-KiuwIIw/exec';
 const GAS_RESERVE_URL = 'https://script.google.com/macros/s/AKfycbx1OoqdsQyKEjjeGVtpXxQhIdDz0iagFrJHi-esMkLcZPZMzB_FbhM80jZYjM_hJPk/exec';
 const GAS_SEMINAR_RESERVE_URL = 'https://script.google.com/macros/s/AKfycbwdPapeI58usT-CWhuTmr_D_nmDEhNdCWp8JaJRNDWE-9tSYbA-0Tzo3uMoqgS0kPv9/exec';
-const GAS_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbzHsEk-GGII3E0l-JHJVeCfJpQbKif5PM5dawywHCy_JljJUowTZmppknvony1jCuXh/exec';
+const GAS_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbx5BYxCeXz-uTl_erKVjo3XwT8YjOs4Y3aj5ugAmKCzyrLyhtgTHxtX2qO8xJE7jdZe/exec';
 
 let currentEvent = null;
 
@@ -878,7 +878,8 @@ function checkUploadedFile(ev) {
               if (presLink) {
                   presLink.href = data.url;
                   presLink.target = '_blank';
-                  presLink.innerHTML = '📊 ' + data.name;
+                  var dateStr = data.date ? data.date : '';
+                  presLink.innerHTML = '📊 プレゼン資料' + (dateStr ? '<br><span style="font-size:10px;opacity:0.8;">反映日: ' + dateStr + '</span>' : '');
                   presLink.style.background = 'linear-gradient(135deg, #e8f5e9, #d4edda)';
                   presLink.style.color = '#2e7d32';
               }

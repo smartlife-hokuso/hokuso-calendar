@@ -73,10 +73,13 @@ function doGet(e) {
   }
 
   if (latestFile) {
+    var d = latestFile.getDateCreated();
+    var dateStr = Utilities.formatDate(d, "Asia/Tokyo", "yyyy/MM/dd");
     return ContentService.createTextOutput(JSON.stringify({
       found: true,
       url: latestFile.getUrl(),
-      name: latestFile.getName()
+      name: latestFile.getName(),
+      date: dateStr
     })).setMimeType(ContentService.MimeType.JSON);
   }
 
