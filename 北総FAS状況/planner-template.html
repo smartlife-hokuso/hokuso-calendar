@@ -494,13 +494,19 @@ function onMyLogLoaded(data) {
         area.innerHTML = '<div class="history-empty">まだ変更履歴がありません</div>';
         return;
     }
-    // 日付ごとにグループ化
+    // 日付ごとにグループ化（同日同項目は最新のみ）
     var groups = {};
     for (var i = 0; i < changed.length; i++) {
         var log = changed[i];
         var dateKey = getDateKey(log.date);
-        if (!groups[dateKey]) groups[dateKey] = [];
-        groups[dateKey].push(log);
+        if (!groups[dateKey]) groups[dateKey] = {};
+        groups[dateKey][log.item] = log;
+    }
+    // オブジェクトを配列に変換
+    for (var dk in groups) {
+        var items = [];
+        for (var key in groups[dk]) items.push(groups[dk][key]);
+        groups[dk] = items;
     }
     // 日付を古い順→新しい順にソート（古い順で初回判定、表示は新しい順）
     var assetItems = {};
