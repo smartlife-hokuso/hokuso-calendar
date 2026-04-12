@@ -2,8 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMARTLIFE AO 北総校｜2026年度 イベントカレンダー</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>SMART LIFE 北総校｜サークルスケジュール</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -604,27 +606,64 @@ body{
 
 /* ========== レスポンシブ ========== */
 @media(max-width:768px){
-    .header-inner{gap:10px;}
-    .brand-year{font-size:22px;}
-    .brand-name strong{font-size:16px;}
-    .month-year{font-size:28px;}
-    .day-cell{min-height:80px;padding:3px;}
-    .ev-chip{font-size:9px;padding:2px 4px;}
-    .ev-time{display:none;}
+    .header-inner{gap:8px;}
+    .brand-name strong{font-size:17px;}
+    .brand-sub{font-size:13px;}
+    .calendar-month-header{position:relative;}
+    .venue-legend{
+        position:static;
+        transform:none;
+        justify-content:center;
+        margin-top:6px;
+        gap:10px;
+    }
+    .venue-legend-item{font-size:12px;gap:4px;}
+    .venue-dot{width:12px;height:12px;}
+    .month-year{font-size:26px;}
+    .month-ja{font-size:22px;}
+    .day-cell{min-height:75px;padding:3px;}
+    .ev-chip{font-size:9px;padding:3px 4px;line-height:1.3;}
+    .ev-time{font-size:8px;}
+    .ev-venue-label{font-size:8px;}
     .day-number{font-size:11px;}
-    .modal{max-width:100%;border-radius:16px;}
+    .modal{max-width:100%;border-radius:16px;margin:10px;}
+    .modal-header{padding:20px 20px 12px;}
+    .modal-body{padding:0 20px 20px;}
     .modal-title{font-size:16px;}
-    .container{padding:12px 8px 30px;}
+    .modal-info{grid-template-columns:1fr 1fr;gap:10px;padding:14px;}
+    .container{padding:12px 6px 30px;}
     .month-btn{padding:8px 14px;font-size:12px;}
+    .month-nav{gap:4px;}
     .event-card{padding:12px;gap:10px;}
     .event-card-title{font-size:13px;}
+    .event-card-day{font-size:22px;}
+    .filter-bar{gap:4px;}
+    .filter-btn{padding:6px 12px;font-size:11px;}
+    .view-toggle{gap:6px;}
+    .view-btn{padding:7px 14px;font-size:11px;}
+    .footer{padding:24px 16px;}
+    .fc-phone{font-size:18px;}
 }
 @media(max-width:480px){
-    .day-cell{min-height:65px;padding:2px;}
-    .ev-chip{font-size:8px;padding:1px 3px;border-left-width:2px;}
+    .brand-name strong{font-size:15px;letter-spacing:1px;}
+    .brand-sub{font-size:11px;letter-spacing:1px;}
+    .month-year{font-size:22px;}
+    .month-ja{font-size:18px;}
+    .venue-legend{gap:8px;}
+    .venue-legend-item{font-size:11px;}
+    .day-cell{min-height:60px;padding:2px;}
+    .ev-chip{font-size:8px;padding:2px 3px;border-left-width:2px;}
+    .ev-venue-label{display:none;}
     .day-number{font-size:10px;}
     .calendar-grid{border-radius:10px;}
-    .day-header{padding:6px 2px;font-size:10px;}
+    .day-header{padding:6px 2px;font-size:10px;letter-spacing:1px;}
+    .modal-info{grid-template-columns:1fr;gap:8px;}
+    .cta-phone{font-size:20px;}
+    .footer-campus{padding:12px;}
+    .fc-name{font-size:13px;}
+    .fc-shop{font-size:10px;}
+    .fc-address{font-size:10px;}
+    .fc-phone{font-size:16px;}
 }
 </style>
 </head>
