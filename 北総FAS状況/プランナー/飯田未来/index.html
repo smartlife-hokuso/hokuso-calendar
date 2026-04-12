@@ -207,9 +207,9 @@ body {
         <div class="tab-bar">
             <button class="tab-btn active" data-tab="fas">FAS状況</button>
             <button class="tab-btn" data-tab="win">WIN状況</button>
-            <button class="tab-btn" data-tab="asset">アセット実現</button>
+            <button class="tab-btn" data-tab="asset">アセット実現（当月）</button>
             <button class="tab-btn" data-tab="event">イベント</button>
-            <button class="tab-btn" data-tab="appoint">アポイント</button>
+            <button class="tab-btn" data-tab="appoint">アポイント（当月）</button>
             <button class="tab-btn" data-tab="recruit">人材獲得</button>
             <button class="tab-btn" data-tab="history">履歴</button>
         </div>
@@ -221,13 +221,13 @@ body {
             <div class="data-card"><h3>WIN状況</h3><div class="data-grid" id="grid-win"></div></div>
         </div>
         <div class="section" id="sec-asset">
-            <div class="data-card"><h3>アセット実現（月累計）</h3><div class="data-grid" id="grid-asset"></div></div>
+            <div class="data-card"><h3>アセット実現（当月）</h3><div class="data-grid" id="grid-asset"></div></div>
         </div>
         <div class="section" id="sec-event">
             <div class="data-card"><h3>イベント</h3><div class="data-grid" id="grid-event"></div></div>
         </div>
         <div class="section" id="sec-appoint">
-            <div class="data-card"><h3>アポイント</h3><div class="data-grid" id="grid-appoint"></div></div>
+            <div class="data-card"><h3>アポイント（当月）</h3><div class="data-grid" id="grid-appoint"></div></div>
         </div>
         <div class="section" id="sec-recruit">
             <div class="data-card"><h3>人材獲得</h3><div class="data-grid" id="grid-recruit"></div></div>
@@ -322,7 +322,7 @@ async function init() {
             document.querySelectorAll(".section").forEach(function(s) { s.classList.remove("active"); });
             btn.classList.add("active");
             document.getElementById("sec-" + btn.dataset.tab).classList.add("active");
-            if (btn.dataset.tab === "history") loadHistory();
+            if (btn.dataset.tab === "history") { loadHistory(); showAssetTotal(); }
         });
     });
 }
@@ -428,6 +428,16 @@ async function saveData() {
 }
 
 // 履歴タブクリック時にログ読み込み
+function showAssetTotal() {
+    var total = 0;
+    for (var i = 0; i < categories.asset.length; i++) {
+        var val = sheetData[categories.asset[i]];
+        total += Number(val) || 0;
+    }
+    document.getElementById("assetTotal").textContent = total;
+    document.getElementById("assetSummaryCard").style.display = "block";
+}
+
 var historyLoaded = false;
 function loadHistory() {
     if (historyLoaded || !profile) return;
