@@ -223,35 +223,37 @@ body {
         <p>プランナー戦略状況ダッシュボード 2026年4月〜</p>
     </div>
 
-    <div class="icon-stats">
-        <div class="icon-stat">
-            <div class="ic ic-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="num" id="sPeople">60</div>
-            <div class="lbl">プランナー</div>
+    <div style="display:flex; gap:16px; margin-bottom:26px; flex-wrap:wrap; align-items:stretch;">
+        <div class="icon-stats" style="flex:1; margin-bottom:0;">
+            <div class="icon-stat">
+                <div class="ic ic-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div class="num" id="sPeople">60</div>
+                <div class="lbl">プランナー</div>
+            </div>
+            <div class="icon-stat">
+                <div class="ic ic-bases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                <div class="num">8</div>
+                <div class="lbl">拠点</div>
+            </div>
+            <div class="icon-stat">
+                <div class="ic ic-cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="num" id="sCust">-</div>
+                <div class="lbl">総担当軒数</div>
+            </div>
+            <div class="icon-stat">
+                <div class="ic" style="background: linear-gradient(135deg, #e07c4a, #e0a56b);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                <div class="num" id="sAO">-</div>
+                <div class="lbl">総AO生数</div>
+            </div>
+            <div class="icon-stat">
+                <div class="ic ic-vc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <div class="num" id="sVC">-</div>
+                <div class="lbl">総DX数</div>
+            </div>
         </div>
-        <div class="icon-stat">
-            <div class="ic ic-bases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <div class="num">8</div>
-            <div class="lbl">拠点</div>
-        </div>
-        <div class="icon-stat">
-            <div class="ic ic-cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-            <div class="num" id="sCust">-</div>
-            <div class="lbl">総担当軒数</div>
-        </div>
-        <div class="icon-stat">
-            <div class="ic" style="background: linear-gradient(135deg, #e07c4a, #e0a56b);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-            <div class="num" id="sAO">-</div>
-            <div class="lbl">総AO生数</div>
-        </div>
-        <div class="icon-stat">
-            <div class="ic ic-vc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-            <div class="num" id="sVC">-</div>
-            <div class="lbl">総DX数</div>
-        </div>
-        <div class="icon-stat" id="assetRanking" style="display:none; min-width:180px; padding:12px 16px; align-items:flex-start;">
-            <div style="font-size:12px; font-weight:700; color:#6b5ea6; margin-bottom:8px; text-align:center; width:100%;">累計アセット TOP5</div>
-            <div id="rankList" style="width:100%;"></div>
+        <div id="assetRanking" style="display:none; background:rgba(255,255,255,0.92); border-radius:20px; padding:16px 20px; box-shadow:0 4px 16px rgba(100,120,180,0.1); border:1px solid rgba(180,190,220,0.25); min-width:200px; max-width:240px;">
+            <div style="font-size:13px; font-weight:700; color:#6b5ea6; margin-bottom:10px; text-align:center;">累計アセット TOP5</div>
+            <div id="rankList"></div>
         </div>
     </div>
 
