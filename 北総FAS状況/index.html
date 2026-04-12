@@ -249,12 +249,9 @@ body {
             <div class="num" id="sVC">-</div>
             <div class="lbl">総DX数</div>
         </div>
-    </div>
-
-    <div id="assetRanking" style="display:none; margin-bottom:24px;">
-        <div style="background:linear-gradient(135deg, rgba(107,94,166,0.08), rgba(74,124,201,0.08)); border-radius:18px; padding:16px 24px; border:1px solid rgba(180,190,220,0.25);">
-            <div style="font-size:13px; font-weight:700; color:#6b5ea6; margin-bottom:12px; letter-spacing:1px;">累計アセット TOP5</div>
-            <div id="rankList" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+        <div class="icon-stat" id="assetRanking" style="display:none; padding:12px 14px;">
+            <div class="lbl" style="margin-bottom:6px; font-weight:600; color:#6b5ea6;">累計アセット TOP5</div>
+            <div id="rankList"></div>
         </div>
     </div>
 
@@ -484,25 +481,15 @@ function onTotalsLoaded(data) {
     rankArr.sort(function(a, b) { return b.asset - a.asset; });
     var top5 = rankArr.slice(0, 5);
     if (top5.length > 0) {
-        var colors = [
-            "background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;",
-            "background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#fff;",
-            "background:linear-gradient(135deg,#CD7F32,#A0622E);color:#fff;",
-            "background:linear-gradient(135deg,#4a7cc9,#6b9ee0);color:#fff;",
-            "background:linear-gradient(135deg,#6b5ea6,#9b8ec4);color:#fff;"
-        ];
         var rhtml = "";
         for (var r = 0; r < top5.length; r++) {
-            rhtml += '<div style="display:flex; align-items:center; gap:10px; ' + colors[r]
-                + ' border-radius:14px; padding:10px 16px; min-width:140px; flex:1;">'
-                + '<div style="font-family:Quicksand,sans-serif; font-size:22px; font-weight:800; opacity:0.9;">' + (r+1) + '</div>'
-                + '<div style="flex:1;">'
-                + '<div style="font-size:13px; font-weight:600; line-height:1.3;">' + top5[r].name + '</div>'
-                + '<div style="font-family:Quicksand,sans-serif; font-size:18px; font-weight:700;">' + top5[r].asset + '<span style="font-size:10px; opacity:0.8; margin-left:2px;">件</span></div>'
-                + '</div></div>';
+            rhtml += '<div style="display:flex; justify-content:space-between; font-size:11px; line-height:1.8; color:#3a4060;">'
+                + '<span>' + (r+1) + '. ' + top5[r].name + '</span>'
+                + '<span style="font-weight:700; color:#4a7cc9;">' + top5[r].asset + '</span>'
+                + '</div>';
         }
         document.getElementById("rankList").innerHTML = rhtml;
-        document.getElementById("assetRanking").style.display = "block";
+        document.getElementById("assetRanking").style.display = "flex";
     }
 }
 
