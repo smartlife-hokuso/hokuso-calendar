@@ -84,10 +84,16 @@ function readTotals() {
     var dx = Number(allData[itemRows["内DX会員軒数"]] ? allData[itemRows["内DX会員軒数"]][c] : 0) || 0;
     var ao = ippan + senmon + dx;
 
+    var assetKeys = ["VC","内AO生","内専門生","内ビジネス","内DXエントリー","内DXレギュラー","CEX","従業員オプション","WEB","GoogleWokSpace","GenSpark","光/SIM/モバイルルータ","我が社"];
+    var asset = 0;
+    for (var ak = 0; ak < assetKeys.length; ak++) {
+      asset += Number(allData[itemRows[assetKeys[ak]]] ? allData[itemRows[assetKeys[ak]]][c] : 0) || 0;
+    }
+
     totalCust += cust;
     totalVC += dx;
     totalAO += ao;
-    planners[nameKey] = { cust: cust, people: people, ao: ao, dx: dx };
+    planners[nameKey] = { cust: cust, people: people, ao: ao, dx: dx, asset: asset };
   }
 
   return { totalCust: totalCust, totalVC: totalVC, totalAO: totalAO, planners: planners };

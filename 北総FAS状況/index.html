@@ -251,6 +251,13 @@ body {
         </div>
     </div>
 
+    <div id="assetRanking" style="display:none; margin-bottom:20px;">
+        <div style="background:rgba(255,255,255,0.92); border-radius:16px; padding:18px 22px; box-shadow:0 2px 12px rgba(100,120,180,0.08); border:1px solid rgba(180,190,220,0.25); max-width:360px; margin-left:auto;">
+            <div style="font-size:14px; font-weight:700; color:#6b5ea6; margin-bottom:12px;">累計アセット TOP5</div>
+            <div id="rankList"></div>
+        </div>
+    </div>
+
     <div class="search-area">
         <input type="text" id="q" placeholder="プランナー名で検索..." oninput="filter()">
         <div style="margin-top: 10px;">
@@ -410,7 +417,7 @@ body {
 </div>
 
 <script>
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwiHWZf5n-MrGvB__oejC4M-zTXh5UKIeZ1nymOgdVn2cQKFV4oqSm3fszPxDQFB461xQ/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbySa3_gMaU26IkZuNExyli8kaFAr8D9JouTFDhUN7WHZ4FqCPVCQhIodC56-bDH24vmlg/exec";
 
 function filter() {
     const q = document.getElementById('q').value.toLowerCase();
@@ -465,6 +472,30 @@ function onTotalsLoaded(data) {
     document.getElementById('sCust').textContent = totalCust;
     document.getElementById('sAO').textContent = totalAO;
     document.getElementById('sVC').textContent = totalDX;
+
+    // 累計アセットTOP5
+    var rankArr = [];
+    for (var pn in planners) {
+        var pa = planners[pn];
+        if (pa.asset && pa.asset > 0) {
+            rankArr.push({ name: pn, asset: pa.asset });
+        }
+    }
+    rankArr.sort(function(a, b) { return b.asset - a.asset; });
+    var top5 = rankArr.slice(0, 5);
+    if (top5.length > 0) {
+        var medals = ["🥇","🥈","🥉","4.","5."];
+        var rhtml = "";
+        for (var r = 0; r < top5.length; r++) {
+            rhtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0;'
+                + (r < top5.length - 1 ? ' border-bottom:1px solid rgba(180,190,220,0.2);' : '') + '">'
+                + '<span style="font-size:13px; color:#3a4060;"><span style="margin-right:6px;">' + medals[r] + '</span>' + top5[r].name + '</span>'
+                + '<span style="font-family:Quicksand,sans-serif; font-size:16px; font-weight:700; color:#4a7cc9;">' + top5[r].asset + '</span>'
+                + '</div>';
+        }
+        document.getElementById("rankList").innerHTML = rhtml;
+        document.getElementById("assetRanking").style.display = "block";
+    }
 }
 
 // ページ読み込み時に集計を取得
