@@ -500,15 +500,34 @@ function onMyLogLoaded(data) {
         if (!groups[dateKey]) groups[dateKey] = [];
         groups[dateKey].push(log);
     }
-    // 日付を新しい順にソート
-    var dates = Object.keys(groups).sort().reverse();
+    // 日付を古い順→新しい順にソート（古い順で初回判定、表示は新しい順）
+    var assetItems = {};
+    for (var a = 0; a < categories.asset.length; a++) assetItems[categories.asset[a]] = true;
+    var dates = Object.keys(groups).sort();
+    var isFirst = true;
+    var dailyAsset = {};
+    for (var d = 0; d < dates.length; d++) {
+        var date = dates[d];
+        var items = groups[date];
+        var assetDiff = 0;
+        for (var j = 0; j < items.length; j++) {
+            var it = items[j];
+            if (assetItems[it.item] && !isFirst) {
+                assetDiff += (Number(it.newVal) || 0) - (Number(it.oldVal) || 0);
+            }
+        }
+        dailyAsset[date] = isFirst ? "累計" : assetDiff;
+        isFirst = false;
+    }
+    dates.reverse();
     var html = "";
     for (var d = 0; d < dates.length; d++) {
         var date = dates[d];
         var items = groups[date];
         var label = formatDateLabel(date);
+        var assetLabel = dailyAsset[date] === "累計" ? "累計初期値" : "当日アセット件数 " + dailyAsset[date];
         html += '<div class="history-group">';
-        html += '<div class="history-date" onclick="toggleHistory(this)"><span>' + label + '  ' + items.length + '件</span><span class="arrow">▶</span></div>';
+        html += '<div class="history-date" onclick="toggleHistory(this)"><span>' + label + '  ' + assetLabel + '</span><span class="arrow">▶</span></div>';
         html += '<div class="history-items">';
         for (var j = 0; j < items.length; j++) {
             var it = items[j];
