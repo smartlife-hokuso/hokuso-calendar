@@ -173,10 +173,29 @@ body {
 .history-empty { text-align: center; padding: 30px; color: #a0a8c0; font-size: 14px; }
 
 @media (max-width: 768px) {
-    .profile-header { flex-direction: column; text-align: center; padding: 24px 20px; }
-    .profile-info h1 { font-size: 22px; }
-    .data-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-    .tab-btn { padding: 8px 12px; font-size: 12px; }
+    .container { padding: 12px; }
+    .profile-header { flex-direction: column; text-align: center; padding: 20px 16px; }
+    .profile-info h1 { font-size: 20px; }
+    .profile-avatar { width: 64px; height: 64px; font-size: 24px; }
+    .tab-bar { gap: 2px; padding: 3px; border-radius: 12px; -webkit-overflow-scrolling: touch; }
+    .tab-btn { padding: 8px 10px; font-size: 11px; border-radius: 10px; }
+    .data-grid { grid-template-columns: 1fr; gap: 6px; }
+    .data-item { padding: 10px 14px; }
+    .data-item .label { font-size: 13px; }
+    .data-item .value { font-size: 20px; }
+    .data-item .edit-input { width: 80px; font-size: 18px; padding: 8px 10px; -webkit-appearance: none; }
+    .btn { padding: 12px 24px; font-size: 15px; width: 100%; text-align: center; }
+    .action-bar { flex-direction: column; }
+    .data-card { padding: 16px; border-radius: 14px; }
+    .data-card h3 { font-size: 13px; }
+    .back-link { font-size: 13px; padding: 8px 14px; }
+    .history-date { font-size: 13px; padding: 10px 14px; }
+    .history-row { padding: 8px 12px; font-size: 12px; gap: 6px; }
+    .history-row .h-old, .history-row .h-new { min-width: 35px; }
+}
+@media (max-width: 380px) {
+    .tab-btn { padding: 7px 8px; font-size: 10px; }
+    .profile-info h1 { font-size: 18px; }
 }
 </style>
 </head>
