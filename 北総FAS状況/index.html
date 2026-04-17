@@ -44,12 +44,12 @@ body {
 
 /* 集計アイコン */
 .icon-stats {
-    display: flex; justify-content: center; gap: 16px; margin-bottom: 26px; flex-wrap: wrap;
+    display: flex; justify-content: center; gap: 16px; margin-bottom: 26px; flex-wrap: nowrap;
 }
 .icon-stat {
     display: flex; flex-direction: column; align-items: center;
     background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
-    border-radius: 20px; padding: 16px 20px 12px; min-width: 110px;
+    border-radius: 20px; padding: 16px 20px 12px; min-width: 0; flex: 1;
     box-shadow: 0 4px 16px rgba(100, 120, 180, 0.1);
     border: 1px solid rgba(180, 190, 220, 0.25);
     transition: transform 0.2s;
@@ -200,8 +200,8 @@ body {
     .hero { padding: 24px 16px 20px; border-radius: 18px; margin-bottom: 18px; }
     .hero h1 { font-size: 22px; letter-spacing: 1px; }
     .hero p { font-size: 13px; }
-    .icon-stats { gap: 8px; }
-    .icon-stat { min-width: 60px; padding: 10px 8px 8px; border-radius: 14px; }
+    .icon-stats { gap: 8px; flex-wrap: wrap; }
+    .icon-stat { min-width: 60px; padding: 10px 8px 8px; border-radius: 14px; flex: none; }
     .icon-stat .ic { width: 38px; height: 38px; }
     .icon-stat .ic svg { width: 18px; height: 18px; }
     .icon-stat .num { font-size: 18px; }
@@ -261,7 +261,7 @@ body {
             <div class="num" id="sVC">-</div>
             <div class="lbl">総DX数</div>
         </div>
-        <div class="icon-stat" id="assetRanking" style="display:none; padding:12px 14px; min-width:280px;">
+        <div class="icon-stat" id="assetRanking" style="display:none; padding:12px 14px; flex:2;">
             <div class="lbl" style="margin-bottom:6px; font-weight:600; color:#6b5ea6;">累計アセット TOP10</div>
             <div id="rankList" style="display:flex; gap:0 16px; flex-wrap:wrap;"></div>
         </div>
