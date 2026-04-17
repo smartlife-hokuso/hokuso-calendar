@@ -261,9 +261,9 @@ body {
             <div class="num" id="sVC">-</div>
             <div class="lbl">総DX数</div>
         </div>
-        <div class="icon-stat" id="assetRanking" style="display:none; padding:12px 14px; min-width:240px;">
+        <div class="icon-stat" id="assetRanking" style="display:none; padding:12px 14px;">
             <div class="lbl" style="margin-bottom:6px; font-weight:600; color:#6b5ea6;">累計アセット TOP10</div>
-            <div id="rankList" style="display:flex; gap:0 16px; flex-wrap:wrap;"></div>
+            <div id="rankList" style="display:flex; gap:0 20px;"></div>
         </div>
     </div>
 
@@ -493,13 +493,16 @@ function onTotalsLoaded(data) {
     rankArr.sort(function(a, b) { return b.asset - a.asset; });
     var top10 = rankArr.slice(0, 10);
     if (top10.length > 0) {
-        var rhtml = "";
+        var left = "", right = "";
         for (var r = 0; r < top10.length; r++) {
-            rhtml += '<div style="display:flex; justify-content:space-between; font-size:11px; line-height:1.8; color:#3a4060; width:calc(50% - 8px);">'
-                + '<span>' + (r+1) + '. ' + top10[r].name + '</span>'
-                + '<span style="font-weight:700; color:#4a7cc9;">' + top10[r].asset + '</span>'
+            var row = '<div style="display:flex; justify-content:space-between; font-size:11px; line-height:1.8; color:#3a4060;">'
+                + '<span style="white-space:nowrap;">' + (r+1) + '. ' + top10[r].name + '</span>'
+                + '<span style="font-weight:700; color:#4a7cc9; margin-left:8px;">' + top10[r].asset + '</span>'
                 + '</div>';
+            if (r < 5) left += row; else right += row;
         }
+        var rhtml = '<div style="min-width:120px;">' + left + '</div>';
+        if (right) rhtml += '<div style="min-width:120px;">' + right + '</div>';
         document.getElementById("rankList").innerHTML = rhtml;
         document.getElementById("assetRanking").style.display = "flex";
     }
