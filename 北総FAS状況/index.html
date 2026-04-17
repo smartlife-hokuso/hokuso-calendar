@@ -496,10 +496,10 @@ function onTotalsLoaded(data) {
         var left = "", right = "";
         for (var r = 0; r < top10.length; r++) {
             var medal = r === 0 ? "\uD83E\uDD47" : r === 1 ? "\uD83E\uDD48" : r === 2 ? "\uD83E\uDD49" : "";
-            var medalHtml = medal ? '<span style="font-size:13px;">' + medal + '</span>' : '<span style="display:inline-block; width:13px;"></span>';
+            var medalHtml = medal ? '<span style="font-size:13px;">' + medal + '</span>' : '';
             var row = '<div style="display:flex; align-items:center; font-size:11px; line-height:1.9; color:#3a4060;">'
-                + '<span style="width:16px; text-align:right; flex-shrink:0;">' + (r+1) + '</span>'
-                + '<span style="width:20px; text-align:center; flex-shrink:0;">' + medalHtml + '</span>'
+                + '<span style="flex-shrink:0;">' + (r+1) + '.' + (medalHtml ? '' : ' ') + '</span>'
+                + (medalHtml ? '<span style="flex-shrink:0; margin:0 2px;">' + medalHtml + '</span>' : '')
                 + '<span style="flex:1; white-space:nowrap;">' + top10[r].name + '</span>'
                 + '<span style="font-weight:700; color:#4a7cc9; margin-left:8px;">' + top10[r].asset + '</span>'
                 + '</div>';
