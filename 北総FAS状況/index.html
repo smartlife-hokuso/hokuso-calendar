@@ -493,10 +493,10 @@ function onTotalsLoaded(data) {
     rankArr.sort(function(a, b) { return b.asset - a.asset; });
     var top10 = rankArr.slice(0, 10);
     if (top10.length > 0) {
-        var medals = ["","","","","","","","","",""];
         var left = "", right = "";
         for (var r = 0; r < top10.length; r++) {
-            var prefix = r < 3 ? medals[r] + ' ' : (r+1) + '. ';
+            var medal = r === 0 ? "\uD83E\uDD47" : r === 1 ? "\uD83E\uDD48" : r === 2 ? "\uD83E\uDD49" : "";
+            var prefix = medal ? medal + " " : (r+1) + ". ";
             var row = '<div style="display:flex; justify-content:space-between; font-size:11px; line-height:1.8; color:#3a4060;">'
                 + '<span style="white-space:nowrap;">' + prefix + top10[r].name + '</span>'
                 + '<span style="font-weight:700; color:#4a7cc9; margin-left:8px;">' + top10[r].asset + '</span>'
