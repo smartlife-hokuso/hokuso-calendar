@@ -19,6 +19,17 @@ var PLAN_FOLDER_NAME = "FAS計画生産シート";
 var PLAN_SHEET_NAME = "計画シート管理";
 var PLAN_DELETE_LOG = "計画シート削除ログ";
 
+// 月初リセット対象（当月項目）。ここに無い項目（FAS/WIN/人材獲得）は累計として継続
+var MONTHLY_RESET_ITEMS = [
+  // アセット実現（当月）13項目
+  "VC","内AO生","内専門生","内ビジネス","内DXエントリー","内DXレギュラー",
+  "CEX","従業員オプション","WEB","GoogleWokSpace","GenSpark","光/SIM/モバイルルータ","我が社",
+  // イベント（当月）3項目
+  "イベント来館","イベント参加確定","イベント参加予定",
+  // アポイント（当月）4項目
+  "アポイントコール数","アポイントラウンド数","アポイント（確定）軒数","アポイント（確定）人数"
+];
+
 function doGet(e) {
   var callback = e.parameter.callback || "";
   var action = e.parameter.action || "";
@@ -383,6 +394,56 @@ function writePlanDeleteLog(name, title, filename, fileId) {
   }
   var now = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
   sh.appendRow([now, name, title, filename, fileId]);
+}
+
+// 月初リセット: 現シートを指定名にコピー保存し、当月項目を0にリセット
+// ★GASエディタから手動実行する。下の archiveName を毎月書き換えてから実行
+function archiveAndResetMonth() {
+  var archiveName = "2026年4月"; // ★毎月変更: アーカイブ先のシート名
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var src = ss.getSheetByName(SHEET_NAME);
+  if (!src) return { status: "error", message: "現シートが見つかりません: " + SHEET_NAME };
+  if (ss.getSheetByName(archiveName)) {
+    return { status: "error", message: archiveName + " は既に存在します。アーカイブ名を変えるか既存を削除してください" };
+  }
+
+  // 1) アーカイブ作成（現シートを丸ごとコピー）
+  var archive = src.copyTo(ss);
+  archive.setName(archiveName);
+  ss.setActiveSheet(archive);
+  ss.moveActiveSheet(ss.getNumSheets());
+
+  // 2) 現シートの当月項目を0リセット
+  var lastCol = src.getLastColumn();
+  var lastRow = src.getLastRow();
+  var allData = src.getRange(1, 1, lastRow, lastCol).getValues();
+  var monthlyMap = {};
+  for (var i = 0; i &lt; MONTHLY_RESET_ITEMS.length; i++) monthlyMap[MONTHLY_RESET_ITEMS[i]] = true;
+
+  var resetRows = [];
+  for (var r = 3; r &lt; allData.length; r++) {
+    var item = allData[r][2] ? allData[r][2].toString().trim() : "";
+    if (item &amp;&amp; monthlyMap[item]) resetRows.push(r);
+  }
+
+  // D列（4列目）以降をまとめて0で上書き
+  var width = lastCol - 3;
+  if (width &gt; 0) {
+    var zeros = [];
+    for (var c = 0; c &lt; width; c++) zeros.push(0);
+    for (var k = 0; k &lt; resetRows.length; k++) {
+      src.getRange(resetRows[k] + 1, 4, 1, width).setValues([zeros]);
+    }
+  }
+
+  src.getRange(2, 2).setValue("更新日:" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日") + "（" + archiveName + "アーカイブ後リセット済）");
+
+  return {
+    status: "ok",
+    archived: archiveName,
+    resetItemCount: resetRows.length,
+    message: archiveName + " にアーカイブし、" + resetRows.length + "項目を0リセットしました"
+  };
 }
 
 function writeLog(ss, name, values, updatedKeys, oldValues) {
