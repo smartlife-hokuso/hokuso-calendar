@@ -395,9 +395,9 @@ function writePlanDeleteLog(name, title, filename, fileId) {
 }
 
 // 月初リセット: 現シートを指定名にコピー保存し、当月項目を0にリセット
-// ★GASエディタから手動実行する。下の archiveName を毎月書き換えてから実行
-function archiveAndResetMonth() {
-  var archiveName = "2026年4月"; // ★毎月変更: アーカイブ先のシート名
+// 引数 archiveNameParam: 指定すればそれを使う。省略時はデフォルト名を使用（手動実行用）
+function archiveAndResetMonth(archiveNameParam) {
+  var archiveName = archiveNameParam || "2026年4月"; // ★手動実行時のデフォルト
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var src = ss.getSheetByName(SHEET_NAME);
   if (!src) return { status: "error", message: "現シートが見つかりません: " + SHEET_NAME };
@@ -488,9 +488,9 @@ function restoreFromArchive() {
 //   - 最初のログが X→Y (Y>X>0): 上乗せ → 当月値 = 現在値 - X
 //   - 最初のログが X→Y (X>Y>0): 修正/減算 → 当月値 = 現在値 - Y
 //   - 結果が負になる場合は 0 にクランプ
-// ★GASエディタから手動実行する。下の monthPrefix を当月の日付プレフィックスに書き換えてから実行
-function recomputeMonthFromLogs() {
-  var monthPrefix = "2026/05/"; // ★毎月変更: 当月のログ日付プレフィックス（末尾スラッシュ必須）
+// 引数 monthPrefixParam: 指定すればそれを使う。省略時はデフォルトを使用（手動実行用）
+function recomputeMonthFromLogs(monthPrefixParam) {
+  var monthPrefix = monthPrefixParam || "2026/05/"; // ★手動実行時のデフォルト
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var src = ss.getSheetByName(SHEET_NAME);
   var logSheet = ss.getSheetByName("変更ログ");
@@ -562,6 +562,82 @@ function recomputeMonthFromLogs() {
     rowsUpdated: rowsUpdated,
     message: monthPrefix + " のログから " + rowsUpdated + " 行を再計算しました"
   };
+}
+
+// 自動月次リセット: 毎月1日 03:00 JST に時間トリガーから呼ばれる
+// 前月分を再計算→アーカイブ→現シートを0リセット の順で実行
+function monthlyResetTrigger() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var now = new Date();
+  // 前月（実行日の1ヶ月前の月初）
+  var prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  var year = prev.getFullYear();
+  var month = prev.getMonth() + 1;
+  var monthPrefix = year + "/" + ("0" + month).slice(-2) + "/";
+  var archiveName = year + "年" + month + "月";
+
+  var execLog = ss.getSheetByName("自動実行ログ");
+  if (!execLog) {
+    execLog = ss.insertSheet("自動実行ログ");
+    execLog.appendRow(["実行日時", "対象月", "結果", "詳細"]);
+    execLog.getRange(1, 1, 1, 4).setFontWeight("bold");
+  }
+  var nowStr = Utilities.formatDate(now, "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
+
+  try {
+    // 1. 前月分を純粋な実績値に再計算（上書き派の累計を当月分のみに変換）
+    var rec = recomputeMonthFromLogs(monthPrefix);
+    if (rec.status !== "ok") throw new Error("recompute失敗: " + rec.message);
+
+    // 2. アーカイブ＋リセット
+    var arc = archiveAndResetMonth(archiveName);
+    if (arc.status !== "ok") throw new Error("archive失敗: " + arc.message);
+
+    execLog.appendRow([nowStr, archiveName, "成功", "再計算" + rec.rowsUpdated + "行 / " + arc.message]);
+    return { status: "ok", archiveName: archiveName, monthPrefix: monthPrefix };
+  } catch (err) {
+    execLog.appendRow([nowStr, archiveName, "失敗", String(err)]);
+    return { status: "error", message: String(err) };
+  }
+}
+
+// 自動トリガーを設定: 毎月1日 03:00 JST に monthlyResetTrigger を実行
+// ★GASエディタから1回だけ手動実行すれば、以降は自動で走る
+function setupAutoMonthlyReset() {
+  // 既存の同名トリガーを削除して重複を防ぐ
+  var triggers = ScriptApp.getProjectTriggers();
+  var removed = 0;
+  for (var i = 0; i &lt; triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === "monthlyResetTrigger") {
+      ScriptApp.deleteTrigger(triggers[i]);
+      removed++;
+    }
+  }
+  // 毎月1日 03:00 JST にトリガー設定
+  ScriptApp.newTrigger("monthlyResetTrigger")
+    .timeBased()
+    .onMonthDay(1)
+    .atHour(3)
+    .inTimezone("Asia/Tokyo")
+    .create();
+  return {
+    status: "ok",
+    removed: removed,
+    message: "毎月1日 03:00 (JST) に monthlyResetTrigger を自動実行するトリガーを設定しました"
+  };
+}
+
+// 自動トリガーを削除（自動運用を止める時に使う）
+function removeAutoMonthlyReset() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var removed = 0;
+  for (var i = 0; i &lt; triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === "monthlyResetTrigger") {
+      ScriptApp.deleteTrigger(triggers[i]);
+      removed++;
+    }
+  }
+  return { status: "ok", removed: removed, message: removed + " 個のトリガーを削除しました" };
 }
 
 function writeLog(ss, name, values, updatedKeys, oldValues) {
