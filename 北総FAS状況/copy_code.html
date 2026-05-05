@@ -480,6 +480,90 @@ function restoreFromArchive() {
   };
 }
 
+// 変更ログから当月分の純粋な実績値を計算して現シートに反映
+// 各プランナー×当月項目について、最初の月内ログを基準に当月分を逆算する
+//   - 月内ログなし → 0
+//   - 最初のログが X→0 (X>0): 自己リセット → 当月値 = 現在値
+//   - 最初のログが 0→Y: 0スタート → 当月値 = 現在値
+//   - 最初のログが X→Y (Y>X>0): 上乗せ → 当月値 = 現在値 - X
+//   - 最初のログが X→Y (X>Y>0): 修正/減算 → 当月値 = 現在値 - Y
+//   - 結果が負になる場合は 0 にクランプ
+// ★GASエディタから手動実行する。下の monthPrefix を当月の日付プレフィックスに書き換えてから実行
+function recomputeMonthFromLogs() {
+  var monthPrefix = "2026/05/"; // ★毎月変更: 当月のログ日付プレフィックス（末尾スラッシュ必須）
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var src = ss.getSheetByName(SHEET_NAME);
+  var logSheet = ss.getSheetByName("変更ログ");
+  if (!src) return { status: "error", message: SHEET_NAME + " シートが見つかりません" };
+  if (!logSheet) return { status: "error", message: "変更ログシートが見つかりません" };
+
+  var monthlyMap = {};
+  for (var i = 0; i &lt; MONTHLY_RESET_ITEMS.length; i++) monthlyMap[MONTHLY_RESET_ITEMS[i]] = true;
+
+  var lastRow = src.getLastRow();
+  var lastCol = src.getLastColumn();
+  var srcData = src.getRange(1, 1, lastRow, lastCol).getValues();
+
+  var itemToRow = {};
+  for (var r = 3; r &lt; srcData.length; r++) {
+    var it = srcData[r][2] ? srcData[r][2].toString().trim() : "";
+    if (it) itemToRow[it] = r;
+  }
+
+  // 変更ログから「各プランナー×当月項目の最初のエントリ」を抽出
+  var logRange = logSheet.getDataRange();
+  var logVals = logRange.getValues();
+  var logDisp = logRange.getDisplayValues();
+  var firstLog = {};
+  for (var lr = 1; lr &lt; logVals.length; lr++) {
+    var date = logDisp[lr][0] || "";
+    if (date.indexOf(monthPrefix) !== 0) continue;
+    var nm = logVals[lr][1] ? logVals[lr][1].toString().replace(/\s/g, "") : "";
+    var it = logVals[lr][2] ? logVals[lr][2].toString().trim() : "";
+    if (!nm || !it || !monthlyMap[it]) continue;
+    var key = nm + "|" + it;
+    if (firstLog[key]) continue;
+    firstLog[key] = {
+      oldVal: Number(logVals[lr][3]) || 0,
+      newVal: Number(logVals[lr][4]) || 0
+    };
+  }
+
+  // 当月項目の行ごとに全プランナー列を一括更新
+  var width = lastCol - 3;
+  var rowsUpdated = 0;
+  for (var mi = 0; mi &lt; MONTHLY_RESET_ITEMS.length; mi++) {
+    var it = MONTHLY_RESET_ITEMS[mi];
+    var row = itemToRow[it];
+    if (row === undefined) continue;
+    var newRow = [];
+    for (var c = 3; c &lt; lastCol; c++) {
+      var nm = srcData[2][c] ? srcData[2][c].toString().replace(/\s/g, "") : "";
+      if (!nm) { newRow.push(srcData[row][c]); continue; }
+      var current = Number(srcData[row][c]) || 0;
+      var key = nm + "|" + it;
+      var log = firstLog[key];
+      var nv;
+      if (!log) nv = 0;
+      else if (log.newVal === 0 || log.oldVal === 0) nv = current;
+      else if (log.newVal &gt; log.oldVal) nv = current - log.oldVal;
+      else nv = current - log.newVal;
+      if (nv &lt; 0) nv = 0;
+      newRow.push(nv);
+    }
+    src.getRange(row + 1, 4, 1, width).setValues([newRow]);
+    rowsUpdated++;
+  }
+
+  src.getRange(2, 2).setValue("更新日:" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日") + "（" + monthPrefix + " ログから当月分を再計算）");
+
+  return {
+    status: "ok",
+    rowsUpdated: rowsUpdated,
+    message: monthPrefix + " のログから " + rowsUpdated + " 行を再計算しました"
+  };
+}
+
 function writeLog(ss, name, values, updatedKeys, oldValues) {
   var logSheet = ss.getSheetByName("変更ログ");
   if (!logSheet) {
