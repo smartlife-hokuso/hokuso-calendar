@@ -587,9 +587,17 @@ function recomputeMonthFromLogs(monthPrefixParam) {
   };
 }
 
-// apo.ozzio.info からの月次データを受け取って FAS スプレッドシートに反映
+// apo.ozzio.info からの月次データを受け取って FAS スプレッドシートに反映（差分同期方式）
 // payload: { action:"sync_apo", month:"2026/05", data:[{apo_name, values:{...}}, ...], syncDate:"..." }
-// values: アポイントコール数 / アポイントラウンド数 / アポイント（確定）軒数 / アポイント（確定）人数
+// values: アポイントコール数 / アポイント（確定）軒数 / アポイント（確定）人数
+//
+// 動作:
+//   - 「apo同期状態」シートに前回apo値を保存
+//   - 今回apo値 - 前回apo値 = delta を計算し、FASセルに加算（上書きせず）
+//   - これによりプランナーの手入力分は保持される
+//   - 初回（状態なし）はブートストラップ:
+//       FAS=0 かつ apo>0 → FASに apo値を書き込み（初期投入）
+//       FAS>0 → FASは触らず状態のみ記録（既に同期済みと仮定）
 function syncFromApo(payload) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var ws = ss.getSheetByName(SHEET_NAME);
@@ -611,8 +619,20 @@ function syncFromApo(payload) {
     if (items[r][0]) itemToRow[items[r][0].toString().trim()] = r + 1;
   }
 
-  var processed = 0, skipped = 0, conflictsDetected = 0;
+  // apo同期状態シートを取得して前回値マップを作成
+  var stateSheet = getOrCreateApoStateSheet(ss);
+  var stateData = stateSheet.getDataRange().getValues();
+  var stateMap = {}; // key = "nameKey|item" → {row, prevApo}
+  for (var sr = 1; sr < stateData.length; sr++) {
+    var snm = stateData[sr][0] ? stateData[sr][0].toString().replace(/\s/g, "") : "";
+    var sit = stateData[sr][1] ? stateData[sr][1].toString().trim() : "";
+    if (!snm || !sit) continue;
+    stateMap[snm + "|" + sit] = { row: sr + 1, prevApo: Number(stateData[sr][2]) || 0 };
+  }
+
+  var processed = 0, skipped = 0, conflictsDetected = 0, bootstrapped = 0;
   var skippedNames = [];
+  var nowStr = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm:ss");
 
   for (var d = 0; d < data.length; d++) {
     var entry = data[d];
@@ -631,43 +651,97 @@ function syncFromApo(payload) {
       continue;
     }
 
-    // 各項目の更新前値を取得
     var values = entry.values || {};
     var updatedKeys = [];
     var oldValues = {};
+    var newValuesForLog = {};
     var keys = Object.keys(values);
+
     for (var k = 0; k < keys.length; k++) {
       var item = keys[k];
       var row = itemToRow[item];
       if (!row) continue;
-      var oldVal = ws.getRange(row, col).getValue();
-      var oldNum = (oldVal !== null && oldVal !== "") ? (Number(oldVal) || 0) : 0;
-      var newNum = Number(values[item]) || 0;
-      if (oldNum !== newNum) {
-        oldValues[item] = oldNum;
-        ws.getRange(row, col).setValue(newNum);
-        updatedKeys.push(item);
 
-        // 競合検知: 直近24時間以内の手動入力が同じ項目にあれば記録
-        if (detectConflict(ss, fasName, item, "apo")) conflictsDetected++;
+      var newApoVal = Number(values[item]) || 0;
+      var stateKey = nameKey + "|" + item;
+      var existing = stateMap[stateKey];
+      var currentFasVal = Number(ws.getRange(row, col).getValue()) || 0;
+
+      if (!existing) {
+        // ブートストラップ: 状態シートに新規追加、既存FAS値は基本そのまま
+        if (currentFasVal === 0 && newApoVal > 0) {
+          // FAS未入力 & apoに値あり → 初期投入
+          ws.getRange(row, col).setValue(newApoVal);
+          oldValues[item] = 0;
+          updatedKeys.push(item);
+          newValuesForLog[item] = newApoVal;
+        }
+        stateSheet.appendRow([fasName, item, newApoVal, nowStr]);
+        bootstrapped++;
+        continue;
+      }
+
+      // 差分同期: delta = 今回apo - 前回apo
+      var delta = newApoVal - existing.prevApo;
+      if (delta !== 0) {
+        var newFasVal = currentFasVal + delta;
+        if (newFasVal < 0) newFasVal = 0;
+        if (newFasVal !== currentFasVal) {
+          oldValues[item] = currentFasVal;
+          ws.getRange(row, col).setValue(newFasVal);
+          updatedKeys.push(item);
+          newValuesForLog[item] = newFasVal;
+
+          // 競合検知
+          if (detectConflict(ss, fasName, item, "apo")) conflictsDetected++;
+        }
+        // 状態を更新
+        stateSheet.getRange(existing.row, 3).setValue(newApoVal);
+        stateSheet.getRange(existing.row, 4).setValue(nowStr);
+        existing.prevApo = newApoVal;
       }
     }
+
     if (updatedKeys.length > 0) {
-      writeLog(ss, fasName, values, updatedKeys, oldValues, "apo");
+      writeLog(ss, fasName, newValuesForLog, updatedKeys, oldValues, "apo");
       processed++;
     }
   }
 
-  ws.getRange(2, 2).setValue("更新日:" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日 HH:mm") + "（apo自動同期）");
+  ws.getRange(2, 2).setValue("更新日:" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日 HH:mm") + "（apo差分同期）");
 
   return {
     status: "ok",
     processed: processed,
+    bootstrapped: bootstrapped,
     skipped: skipped,
     skippedNames: skippedNames,
     conflicts: conflictsDetected,
     syncDate: payload.syncDate || ""
   };
+}
+
+// apo同期状態シートを取得（なければ作成）
+function getOrCreateApoStateSheet(ss) {
+  var sh = ss.getSheetByName("apo同期状態");
+  if (!sh) {
+    sh = ss.insertSheet("apo同期状態");
+    sh.appendRow(["プランナー名", "項目名", "前回apo値", "最終同期日時"]);
+    sh.getRange(1, 1, 1, 4).setFontWeight("bold");
+  }
+  return sh;
+}
+
+// apo同期状態をクリア（月初リセット時に呼ぶ）
+function clearApoState(ss) {
+  var sh = ss.getSheetByName("apo同期状態");
+  if (!sh) return 0;
+  var lastRow = sh.getLastRow();
+  if (lastRow > 1) {
+    sh.getRange(2, 1, lastRow - 1, 4).clearContent();
+    return lastRow - 1;
+  }
+  return 0;
 }
 
 // 競合検知: 同じ項目が今日「manual と apo」両方で更新されたか確認、あれば「競合ログ」シートに記録
@@ -781,7 +855,10 @@ function monthlyResetTrigger() {
     var arc = archiveAndResetMonth(archiveName);
     if (arc.status !== "ok") throw new Error("archive失敗: " + arc.message);
 
-    execLog.appendRow([nowStr, archiveName, "成功", "再計算" + rec.rowsUpdated + "行 / " + arc.message]);
+    // 3. apo同期状態をクリア（月境界で前回値をリセットしないと差分計算が破綻）
+    var clearedRows = clearApoState(ss);
+
+    execLog.appendRow([nowStr, archiveName, "成功", "再計算" + rec.rowsUpdated + "行 / " + arc.message + " / apo状態" + clearedRows + "行クリア"]);
     return { status: "ok", archiveName: archiveName, monthPrefix: monthPrefix };
   } catch (err) {
     execLog.appendRow([nowStr, archiveName, "失敗", String(err)]);
