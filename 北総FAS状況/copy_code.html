@@ -958,6 +958,17 @@ function _logApoFetchResult(result) {
   return result;
 }
 
+// 強制フル同期: apo現在値でFASを完全上書きし、状態シートをリセット。1回限りの修復用
+// ★この後の自動sync（差分加算）は通常通り動く
+function forceFullResyncFromApo() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  // 状態シート削除（次回 sync で空状態から再作成 → bootstrap が全項目に走る）
+  var sh = ss.getSheetByName(&quot;apo同期状態&quot;);
+  if (sh) ss.deleteSheet(sh);
+  // 即時同期実行
+  return fetchApoMonthlyAndSync();
+}
+
 // 自動同期トリガー設定: 1時間ごとに fetchApoMonthlyAndSync を実行
 // ★GASエディタから1回だけ実行
 function setupAutoApoSync() {
