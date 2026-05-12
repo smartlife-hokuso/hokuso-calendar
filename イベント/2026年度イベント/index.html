@@ -120,6 +120,8 @@ body {
 .venue-row.narita { border-left-color: #88b4d8; }
 .venue-row.kamagaya { border-left-color: #88c8a8; }
 .venue-row.chibant { border-left-color: #d8b888; }
+.venue-row.sun .vr-date { color: #d94848; }
+.venue-row.sat .vr-date { color: #3a7bbf; }
 @media (max-width: 600px) {
     .venue-row { flex-direction: column; align-items: flex-start; gap: 4px; }
     .venue-row .vr-date { min-width: 0; }
@@ -724,9 +726,11 @@ venues.forEach(v => {
     venueEvents.forEach(ev => {
         const row = document.createElement('a');
         row.href = '#';
-        row.className = 'venue-row ' + (venueRowClass[v] || '');
         const d = new Date(ev.date);
-        const dow = dowJaShort[d.getDay()];
+        const dowNum = d.getDay();
+        const dowClass = dowNum===0 ? ' sun' : (dowNum===6 ? ' sat' : '');
+        row.className = 'venue-row ' + (venueRowClass[v] || '') + dowClass;
+        const dow = dowJaShort[dowNum];
         const dateStr = (d.getMonth()+1) + '/' + d.getDate();
         const isSeminar = ev.type === 'seminar';
         const circleLabel = isSeminar ? '⭐ セミナー' : (ev.circle || '');
