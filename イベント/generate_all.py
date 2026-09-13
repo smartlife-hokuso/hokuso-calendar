@@ -220,7 +220,8 @@ AIは難しいものではなく、私たちの生活を豊かにする身近な
 
 # ===== レポートHTML生成 =====
 def generate_report_html(ev, report):
-    month_names = {4:'April', 5:'May', 6:'June', 7:'July', 8:'August', 9:'September'}
+    month_names = {4:'April', 5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
+                   10:'October', 11:'November', 12:'December', 1:'January', 2:'February', 3:'March'}
     date_obj = datetime.strptime(ev['date'], '%Y-%m-%d')
     month_en = month_names.get(date_obj.month, '')
 
