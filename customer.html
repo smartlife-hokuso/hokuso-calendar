@@ -534,19 +534,27 @@ body{
     margin-top:40px;
 }
 .footer-brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
     font-size:18px;
     font-weight:700;
     color:#2a7b9b;
     margin-bottom:20px;
     letter-spacing:1px;
 }
+.footer-brand .brand-mark{font-size:21px;}
 .footer-campuses{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
     gap:16px;
     max-width:900px;
     margin:0 auto 20px;
 }
+.footer-campus{flex:0 1 258px;}
 .footer-campus{
     background:#f8f6f3;
     border-radius:14px;
@@ -557,6 +565,8 @@ body{
 .footer-campus.fc-tomisato{border-top-color:#e8889e;}
 .footer-campus.fc-narita{border-top-color:#6aa8d8;}
 .footer-campus.fc-kamagaya{border-top-color:#88bb70;}
+.footer-campus.fc-chibant{border-top-color:#e8a050;}
+.footer-campus.fc-soyora{border-top-color:#4fb5d6;}
 .fc-name{
     font-size:14px;
     font-weight:700;
@@ -589,7 +599,8 @@ body{
     line-height:1.6;
 }
 @media(max-width:768px){
-    .footer-campuses{grid-template-columns:1fr;max-width:400px;}
+    .footer-campuses{max-width:400px;}
+    .footer-campus{flex:1 1 100%;}
 }
 
 /* ========== フィルター ========== */
@@ -731,7 +742,10 @@ body{
 
 <!-- フッター -->
 <div class="footer">
-    <div class="footer-brand">SMART LIFE 北総校 お問い合わせ</div>
+    <div class="footer-brand">
+        <span class="brand-mark"><span class="bm-life">SMARTLIFE</span><span class="bm-r">&#174;</span><span class="bm-ao">AO</span></span>
+        <span>&#x5317;&#x7DCF;&#x6821;&#x3000;&#x304A;&#x554F;&#x3044;&#x5408;&#x308F;&#x305B;</span>
+    </div>
     <div class="footer-campuses">
         <div class="footer-campus fc-tomisato">
             <div class="fc-name">富里キャンパス</div>
@@ -750,6 +764,18 @@ body{
             <div class="fc-shop">ピーシーデポスマートライフ鎌ヶ谷BASE</div>
             <div class="fc-address">〒273-0107 千葉県鎌ヶ谷市新鎌ヶ谷4丁目13-9</div>
             <div class="fc-phone">047-441-5111</div>
+        </div>
+        <div class="footer-campus fc-chibant">
+            <div class="fc-name">千葉NTキャンパス</div>
+            <div class="fc-shop">ピーシーデポスマートライフ千葉ニュータウンClub Lounge</div>
+            <div class="fc-address">〒270-1337 千葉県印西市草深1157-5</div>
+            <div class="fc-phone">0476-94-7167</div>
+        </div>
+        <div class="footer-campus fc-soyora">
+            <div class="fc-name">そよら成田キャンパス</div>
+            <div class="fc-shop">そよら成田ニュータウン内</div>
+            <div class="fc-address">〒286-0017 千葉県成田市赤坂2-1-10</div>
+            <div class="fc-phone">0476-29-4261</div>
         </div>
     </div>
     <div class="footer-note">
