@@ -1008,8 +1008,9 @@ const campusInfo = {
     '富里': { name:'富里キャンパス', shop:'ピーシーデポスマートライフ富里インターBASE', address:'〒286-0221 千葉県富里市七栄532-117', phone:'0476-90-6665' },
     '成田': { name:'成田キャンパス', shop:'ピーシーデポスマートライフ成田Club Lounge', address:'〒286-0029 千葉県成田市ウイング土屋87', phone:'0476-20-2551' },
     '鎌ヶ谷': { name:'鎌ケ谷キャンパス', shop:'ピーシーデポスマートライフ鎌ヶ谷BASE', address:'〒273-0107 千葉県鎌ヶ谷市新鎌ヶ谷4丁目13-9', phone:'047-441-5111' },
-    '千葉NT': { name:'千葉ニュータウンキャンパス', shop:'ピーシーデポスマートライフ千葉ニュータウン', address:'', phone:'' },
-    'そよら成田': { name:'そよら成田', shop:'そよら成田', address:'', phone:'' }
+    '千葉NT': { name:'千葉NTキャンパス', shop:'ピーシーデポスマートライフ千葉ニュータウンClub Lounge', address:'〒270-1337 千葉県印西市草深1157-5', phone:'0476-94-7167' },
+    'そよら成田': { name:'そよら成田キャンパス', shop:'そよら成田ニュータウン内', address:'〒286-0017 千葉県成田市赤坂2-1-10', phone:'0476-29-4261' },
+    '全BASE': { name:'全BASE合同開催', shop:'各キャンパスにてお問い合わせください', address:'', phone:'' }
 };
 function openModal(ev) {
     const [tag, tagCls] = genreTag(ev.circle);
@@ -1022,7 +1023,10 @@ function openModal(ev) {
         `<div><div class="info-label">会場</div><div class="info-value"><span class="modal-venue-badge"><span class="modal-venue-dot" style="background:${venueColor(ev.venue)};"></span>${ev.venue}</span></div></div>` +
         `<div><div class="info-label">サークル</div><div class="info-value" style="font-size:12px;">${ev.circle}</div></div>`;
     const ci = campusInfo[ev.venue] || campusInfo['富里'];
-    document.getElementById('ctaPhone').textContent = ci.phone;
+    // 電話番号を持たない会場（全BASE等）では番号欄を出さない
+    const phoneEl = document.getElementById('ctaPhone');
+    phoneEl.textContent = ci.phone || '';
+    phoneEl.style.display = ci.phone ? '' : 'none';
     document.getElementById('ctaLocation').innerHTML = ci.name + '<br>' + ci.shop;
     document.getElementById('modal').classList.add('show');
 }
