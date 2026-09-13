@@ -33,6 +33,30 @@ body {
                 radial-gradient(circle at 70% 60%, rgba(255,255,255,0.1) 0%, transparent 40%);
     pointer-events: none;
 }
+/* SMARTLIFE AO 北総校 ロゴ（公式ロゴの書体・配色を再現） */
+.brand {
+    position: relative; display: inline-flex; align-items: center; gap: 14px;
+    background: #ffffff; padding: 11px 22px; border-radius: 14px;
+    margin-bottom: 20px; box-shadow: 0 4px 18px rgba(90, 70, 110, 0.18);
+}
+.brand-mark {
+    display: inline-flex; align-items: flex-start;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 27px; font-weight: 800; letter-spacing: -0.6px; line-height: 1;
+}
+.brand-mark .bm-life { color: #111111; }
+.brand-mark .bm-r    { color: #111111; font-size: 11px; font-weight: 700; margin: 0 1px; padding-top: 3px; }
+.brand-mark .bm-ao   { color: #215298; letter-spacing: -1px; }
+.brand-sep    { width: 1px; height: 24px; background: #d8d4de; align-self: center; }
+.brand-campus {
+    font-family: "Zen Maru Gothic", "Quicksand", sans-serif;
+    font-size: 17px; font-weight: 700; color: #4a3a5a; letter-spacing: 2px;
+}
+@media (max-width: 600px) {
+    .brand { gap: 10px; padding: 9px 16px; }
+    .brand-mark { font-size: 21px; }
+    .brand-campus { font-size: 14px; }
+}
 .hero h1 {
     font-family: "Quicksand", "Zen Maru Gothic", sans-serif;
     font-size: 42px; font-weight: 700; margin-bottom: 10px;
@@ -51,16 +75,16 @@ body {
 .legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #7a6b8a; font-weight: 500; }
 .legend-dot { width: 24px; height: 10px; border-radius: 5px; }
 
-.month-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+.month-nav { display: flex; justify-content: center; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
 .month-btn {
-    padding: 10px 22px; border: 2px solid rgba(200, 180, 220, 0.5); border-radius: 30px;
+    padding: 9px 13px; border: 2px solid rgba(200, 180, 220, 0.5); border-radius: 30px;
     background: rgba(255,255,255,0.8); color: #9a80b0; cursor: pointer;
     font-family: "Quicksand", "Zen Maru Gothic", sans-serif;
     font-size: 13px; font-weight: 600; transition: all 0.3s ease;
     display: flex; flex-direction: column; align-items: center; gap: 1px;
     backdrop-filter: blur(5px);
 }
-.month-btn .month-en { font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+.month-btn .month-en { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
 .month-btn .month-ja { font-size: 10px; opacity: 0.7; }
 .month-btn:hover {
     background: linear-gradient(135deg, #e8b4cb, #c9a7d8); color: white;
@@ -414,8 +438,13 @@ body {
 <body>
 <div class="container">
     <div class="hero">
+        <div class="brand">
+            <span class="brand-mark"><span class="bm-life">SMARTLIFE</span><span class="bm-r">&#174;</span><span class="bm-ao">AO</span></span>
+            <span class="brand-sep"></span>
+            <span class="brand-campus">&#x5317;&#x7DCF;&#x6821;</span>
+        </div>
         <h1>北総地域<br>2026 Event Calendar</h1>
-        <p>&#x1F338; &#x5B66;&#x3073;&#x306E;&#x30B5;&#x30FC;&#x30AF;&#x30EB;&#x6D3B;&#x52D5; &#x5E74;&#x9593;&#x30B9;&#x30B1;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#xFF08;&#x5168;96&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#xFF09;</p>
+        <p>&#x1F338; &#x5B66;&#x3073;&#x306E;&#x30B5;&#x30FC;&#x30AF;&#x30EB;&#x6D3B;&#x52D5; &#x5E74;&#x9593;&#x30B9;&#x30B1;&#x30B8;&#x30E5;&#x30FC;&#x30EB;&#xFF08;&#x5168;<span id="evCount">96</span>&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#xFF09;</p>
     </div>
 
     <div class="legend">
@@ -646,6 +675,12 @@ const dayLabels = ['\u6708','\u706B','\u6C34','\u6728','\u91D1','\u571F','\u65E5
 const months = [4,5,6,7,8,9,10,11,12,1,2,3];
 const venues = ['千葉NT', '富里', '鎌ヶ谷', '成田', 'そよら成田', '全BASE'];
 const venueRowClass = { '千葉NT':'chibant', '富里':'tomisato', '鎌ヶ谷':'kamagaya', '成田':'narita', 'そよら成田':'soyora', '全BASE':'allbase' };
+
+// 件数はイベント配列から自動算出（イベント追加時の書き換え漏れを防ぐ）
+{
+    const el = document.getElementById('evCount');
+    if (el) el.textContent = events.length;
+}
 
 // 初期表示: URLハッシュ #m=5 / #v=富里 > 現在月(4-9月の範囲内) > 4月
 function getInitialView() {
